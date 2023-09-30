@@ -10,10 +10,12 @@ import org.springframework.integration.core.GenericTransformer;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.Pollers;
+import org.springframework.integration.dsl.SourcePollingChannelAdapterSpec;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.GenericMessage;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 @Configuration
 @EnableIntegration
@@ -34,7 +36,10 @@ public class IntegrationFlowConfig {
     @SneakyThrows
     @Bean
     public IntegrationFlow producerFlow() {
-        return IntegrationFlow.from(inputs(), c -> c.poller(Pollers.fixedRate(5 * 60 * 1000)))
+        return IntegrationFlow.from(inputs(), c -> c
+                        .poller(Pollers.fixedRate(5  * 1000))
+                        .id("producerFlowEndPoint")
+                )
                 .transform((GenericTransformer<Integer, String>) integer -> "=ab=" + integer)
                 .channel(directChannel())
                 .get();
