@@ -12,20 +12,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 
 @Configuration
-@EnableBatchProcessing(transactionManagerRef = "jpaTransactionManager")
 @RequiredArgsConstructor
 public class CsvFileImportJob {
     private final CsvItemReader csvItemReader;
     private final CsvItemProcessor csvItemProcessor;
     private final CsvItemWriter csvItemWriter;
     private final CsvFileListener csvFileListener;
-
-    @Bean
-    public PlatformTransactionManager jpaTransactionManager () {
-        return new JpaTransactionManager();
-    }
+    private final PlatformTransactionManager transactionManager;
 
     @Bean(name = "CsvJob")
     public Job csvFileImportJob(JobRepository jobRepository) {
@@ -41,11 +37,11 @@ public class CsvFileImportJob {
     @Bean
     public Step csvFileImportStep(JobRepository jobRepository) {
         return new StepBuilder("CsvFileStepBuilder", jobRepository)
-                .<Person, Person>chunk(1, jpaTransactionManager())
+                .<Person, Person>chunk(1, transactionManager)
                 .reader(csvItemReader)
                 .processor(csvItemProcessor)
                 .writer(csvItemWriter)
-                .transactionManager(jpaTransactionManager())
+                .transactionManager(transactionManager)
                 .build();
     }
 }
