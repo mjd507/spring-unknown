@@ -4,18 +4,18 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 
-@Entity(name = "car")
+@Table(name = "car")
 @Data
+@Entity
 public class Car {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long carId;
 
     @Column
     private String model;
 
     @Column
-    private Integer year;
+    private Integer carYear;
 
 }

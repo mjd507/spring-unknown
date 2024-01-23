@@ -19,7 +19,7 @@ public class CarTransactionService {
     @Transactional
     public void b() {
         Car car = new Car();
-        car.setYear(2019);
+        car.setCarYear(2019);
         car.setModel("Tesla");
         carRepository.save(car);
         throw new RuntimeException();

@@ -41,6 +41,7 @@ public class WebSecurityConfig {
             EndpointRequest.EndpointRequestMatcher anyEndpoint = EndpointRequest.toAnyEndpoint();
             List<RequestMatcher> reqMatchers = new ArrayList<>() {{
                 add(new AntPathRequestMatcher("/ws/**"));
+                add(new AntPathRequestMatcher("/h2*/**"));
                 add(anyEndpoint);
             }};
             webSecurity.ignoring().requestMatchers(reqMatchers.toArray(RequestMatcher[]::new));
