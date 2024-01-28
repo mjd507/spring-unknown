@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.GenericTransformer;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Configuration
 @EnableIntegration
 @Slf4j
+@Profile("integration")
 public class IntegrationFlowConfig {
 
     @Bean

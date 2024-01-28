@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MsgModel {
+public class WsMsgModel {
     private String from;
     private String text;
 }
