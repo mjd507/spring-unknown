@@ -34,7 +34,10 @@ spring:
     url: jdbc:h2:mem:testdb
     username: root
     password: root
+    hikari:
+#      auto-commit: false
   jpa:
+#    open-in-view: false
     show-sql: true
     hibernate:
       ddl-auto: create
@@ -46,3 +49,11 @@ spring:
 app:
   user: abc
   pswd: ${secret}
+
+decorator:
+  datasource:
+    flexy-pool:
+      threshold:
+        connection:
+          acquire: -1
+          lease: -1
