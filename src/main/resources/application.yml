@@ -16,6 +16,8 @@ management:
       exposure:
         include: '*'
 spring:
+  activemq:
+    broker-url: vm://localhost:61616
   batch:
     jdbc:
       initialize-schema: always  # 自动创建 batch 相关表

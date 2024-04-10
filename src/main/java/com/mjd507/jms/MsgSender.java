@@ -10,7 +10,6 @@ import jakarta.jms.Queue;
 @RequiredArgsConstructor
 public class MsgSender {
     private final JmsMessagingTemplate jmsMessagingTemplate;
-//    private final Queue queue;
 
     public void send() {
         jmsMessagingTemplate.convertAndSend("amq", new Email("info@example.com", "Hello"));

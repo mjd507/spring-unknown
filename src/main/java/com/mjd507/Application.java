@@ -29,14 +29,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @EnableScheduling
 @SpringBootApplication(exclude = {
-        AxonAutoConfiguration.class, JpaAutoConfiguration.class, JdbcAutoConfiguration.class, JpaEventStoreAutoConfiguration.class,
-        JmsAutoConfiguration.class, ActiveMQAutoConfiguration.class, ArtemisAutoConfiguration.class
+        AxonAutoConfiguration.class, JpaAutoConfiguration.class, JdbcAutoConfiguration.class, JpaEventStoreAutoConfiguration.class
 })
 @ComponentScan(excludeFilters = {
         @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
                 CreateEntityCommand.class, TestController.class, TestEntity.class, TestSubEntity.class,
-                JobController.class, CsvFileImportJob.class, CsvFileListener.class, CsvItemReader.class, CsvItemProcessor.class, CsvItemWriter.class,
-                JmsConfig.class, JmsTestController.class, MsgSender.class, MsgReceiver.class,
+                JobController.class, CsvFileImportJob.class, CsvFileListener.class, CsvItemReader.class, CsvItemProcessor.class, CsvItemWriter.class
         })
 })
 public class Application {

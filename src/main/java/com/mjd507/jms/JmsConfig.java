@@ -1,8 +1,7 @@
 package com.mjd507.jms;
 
 import jakarta.jms.Queue;
-//import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
@@ -23,8 +22,8 @@ public class JmsConfig {
         return converter;
     }
 
-//    @Bean
-//    public Queue queue() {
-//        return new ActiveMQQueue("amq");
-//    }
+    @Bean
+    public Queue queue() {
+        return new ActiveMQQueue("amq");
+    }
 }
