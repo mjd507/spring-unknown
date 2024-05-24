@@ -10,8 +10,8 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.mjd507</groupId>
-    <artifactId>spring-learning</artifactId>
+    <groupId>com.jiandong</groupId>
+    <artifactId>spring-family-demo</artifactId>
     <version>1.0.0</version>
 
     <properties>
