@@ -1,33 +1,26 @@
 package com.jiandong.validate;
 
+import jakarta.validation.GroupSequence;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 /**
  * Created by mjd on 2021/5/19 21:35
  */
-public class ReqVo {
+@GroupSequence({ ReqVoBase.class, ReqVo.class, CombinedCheck.class})
+public class ReqVo extends ReqVoBase {
 
-    @NotNull(message = "name must have val")
-    private String name;
-
-    @Size(min = 1, max = 3)
-    private List<Integer> nums;
-
-    public String getName() {
-        return name;
+    @AssertTrue(message = "invalid name", groups = CombinedCheck.class)
+    private boolean isValidName() {
+        return getName().equals("abc");
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Integer> getNums() {
-        return nums;
-    }
-
-    public void setNums(List<Integer> nums) {
-        this.nums = nums;
+    @AssertTrue(message = "all values must greater than 10", groups = CombinedCheck.class)
+    private boolean isValidNum() {
+        return getNums().stream().allMatch(integer -> integer > 10);
     }
 }
+interface CombinedCheck{}

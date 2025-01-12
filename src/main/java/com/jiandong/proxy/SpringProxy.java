@@ -9,6 +9,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.*;
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Configuration
+@ActiveProfiles("spring-proxy")
 public class SpringProxy {
 
     @Target({ElementType.TYPE, ElementType.METHOD})
