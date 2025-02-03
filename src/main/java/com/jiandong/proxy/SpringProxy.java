@@ -9,7 +9,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Profile;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.*;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Configuration
-@ActiveProfiles("spring-proxy")
+@Profile("spring-proxy")
 public class SpringProxy {
 
     @Target({ElementType.TYPE, ElementType.METHOD})
@@ -37,7 +37,7 @@ public class SpringProxy {
         List<Class<?>> classes = new ArrayList<>();
         classes.add(obj.getClass());
         Collections.addAll(classes, obj.getClass().getInterfaces());
-        classes.forEach(clz->{
+        classes.forEach(clz -> {
             ReflectionUtils.doWithMethods(clz, method -> {
                 if (method.getAnnotation(MyTransactional.class) != null) {
                     hasMyTransaction.set(true);
@@ -48,7 +48,7 @@ public class SpringProxy {
     }
 
     @Bean
-    public MyTransactionalBeanPostProcessor myTransactionalBeanPostProcessor () {
+    public MyTransactionalBeanPostProcessor myTransactionalBeanPostProcessor() {
         return new MyTransactionalBeanPostProcessor();
     }
 
@@ -73,7 +73,7 @@ public class SpringProxy {
                         }
                     }
                 });
-               return proxyFactory.getProxy(bean.getClass().getClassLoader());
+                return proxyFactory.getProxy(bean.getClass().getClassLoader());
             }
             return BeanPostProcessor.super.postProcessAfterInitialization(bean, beanName);
         }
@@ -92,7 +92,7 @@ public class SpringProxy {
         return new DefaultConsumerService();
     }
 
-    public static class DefaultConsumerService  {
+    public static class DefaultConsumerService {
         @MyTransactional
         public void create() {
             log.info("call method create");
