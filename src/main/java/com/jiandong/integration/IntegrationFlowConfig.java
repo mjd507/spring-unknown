@@ -1,10 +1,12 @@
 package com.jiandong.integration;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.GenericTransformer;
@@ -14,53 +16,42 @@ import org.springframework.integration.dsl.Pollers;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.GenericMessage;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 @Configuration
 @EnableIntegration
-@Slf4j
-@Profile("integration")
 public class IntegrationFlowConfig {
 
-    @Bean
-    public MessageChannel directChannel() {
-        return new DirectChannel();
-    }
+	private final Logger log = LoggerFactory.getLogger(IntegrationFlowConfig.this.getClass());
 
-    @Bean
-    public MessageSource<Integer> inputs() {
-        AtomicInteger ai = new AtomicInteger(0);
-        return () -> new GenericMessage<>(ai.getAndIncrement());
-    }
+	@Bean
+	public MessageChannel directChannel() {
+		return new DirectChannel();
+	}
 
-    @SneakyThrows
-    @Bean
-    public IntegrationFlow producerFlow() {
-        return IntegrationFlow.from(inputs(), c -> c
-                        .poller(Pollers.fixedRate(5 * 60 * 1000))
-                        .id("producerFlowEndPoint")
-                )
-                .transform((GenericTransformer<Integer, String>) integer -> "=ab=" + integer)
-                .channel(directChannel())
-                .get();
-    }
-//    @SneakyThrows
-//    @Bean
-//    public IntegrationFlow producerFlow2() {
-//        return IntegrationFlows.from(inputs(), c -> c.poller(Pollers.fixedRate(1000)))
-//                .transform((GenericTransformer<Integer, String>) integer -> "===ab===" + integer)
-//                .channel(directChannel())
-//                .get();
-//    }
+	@Bean
+	public MessageSource<Integer> inputs() {
+		AtomicInteger ai = new AtomicInteger(0);
+		return () -> new GenericMessage<>(ai.getAndIncrement());
+	}
 
-    @Bean
-    public IntegrationFlow consumerFlow() {
-        return IntegrationFlow.from(directChannel())
-                .handle((payload, header) -> {
-                    log.info("payload={}", payload);
-                    return null;
-                })
-                .get();
-    }
+	@Bean
+	public IntegrationFlow producerFlow() {
+		return IntegrationFlow.from(inputs(), c -> c
+						.poller(Pollers.fixedRate(60 * 60 * 1000))
+						.id("producerFlowEndPoint")
+				)
+				.transform((GenericTransformer<Integer, String>) integer -> "=ab=" + integer)
+				.channel(directChannel())
+				.get();
+	}
+
+	@Bean
+	public IntegrationFlow consumerFlow() {
+		return IntegrationFlow.from(directChannel())
+				.handle((payload, header) -> {
+					log.info("payload={}", payload);
+					return null;
+				})
+				.get();
+	}
 
 }

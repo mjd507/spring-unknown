@@ -1,13 +1,5 @@
 package com.jiandong.websocket;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public record WsMsgModel(String from, String text) {
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class WsMsgModel {
-    private String from;
-    private String text;
 }

@@ -1,15 +1,19 @@
 package com.jiandong.jms;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
 public class MsgReceiver {
 
-    @JmsListener(destination = "amq")
-    public void receive(Email email) {
-        log.info("Received < {} >", email);
-    }
+	private final Logger log = LoggerFactory.getLogger(MsgReceiver.this.getClass());
+
+	@JmsListener(destination = "amq")
+	public void receive(Email email) {
+		log.info("Received < {} >", email);
+	}
+
 }

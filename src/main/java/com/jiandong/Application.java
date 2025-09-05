@@ -1,40 +1,40 @@
 package com.jiandong;
 
-import com.jiandong.axon.CreateEntityCommand;
-import com.jiandong.axon.TestController;
-import com.jiandong.axon.TestEntity;
-import com.jiandong.axon.TestSubEntity;
-import com.jiandong.batch.*;
-import com.jiandong.config.CustomHighestPriorityPropertiesListener;
-import org.axonframework.springboot.autoconfig.AxonAutoConfiguration;
-import org.axonframework.springboot.autoconfig.JdbcAutoConfiguration;
-import org.axonframework.springboot.autoconfig.JpaAutoConfiguration;
-import org.axonframework.springboot.autoconfig.JpaEventStoreAutoConfiguration;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Created by mjd on 2021/5/14 13:23
  */
 @EnableScheduling
-@SpringBootApplication(exclude = {
-        AxonAutoConfiguration.class, JpaAutoConfiguration.class, JdbcAutoConfiguration.class, JpaEventStoreAutoConfiguration.class
-})
-@ComponentScan(excludeFilters = {
-        @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-                CreateEntityCommand.class, TestController.class, TestEntity.class, TestSubEntity.class,
-                JobController.class, CsvFileImportJob.class, CsvFileListener.class, CsvItemReader.class, CsvItemProcessor.class, CsvItemWriter.class
-        })
-})
+@SpringBootApplication
 public class Application {
 
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(Application.class);
-        application.addListeners(new CustomHighestPriorityPropertiesListener());
-        application.run(args);
-    }
+	public static void main(String[] args) {
+		SpringApplication application = new SpringApplication(Application.class);
+		application.addListeners(new CustomHighestPriorityPropertiesListener());
+		application.run(args);
+	}
+
+	static class CustomHighestPriorityPropertiesListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
+
+		@Override
+		public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
+			ConfigurableEnvironment environment = event.getEnvironment();
+			Map<String, Object> properties = new HashMap<>();
+			properties.put("secret", "get_from_security_api_for_real_pswd");
+			MapPropertySource highestPriorityProperties = new MapPropertySource("highestPriorityProperties", properties);
+			environment.getPropertySources().addFirst(highestPriorityProperties);
+		}
+
+	}
+
 }

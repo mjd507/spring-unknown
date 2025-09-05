@@ -23,6 +23,11 @@ spring:
       initialize-schema: always  # 自动创建 batch 相关表
     job:
       enabled: false
+  sql:
+    init:
+      enabled: true
+#      schema-locations: classpath:schema.sql
+      data-locations: classpath:people.sql
   # 配置数据源信息
 #  datasource:
 #    driverClassName: com.mysql.cj.jdbc.Driver
