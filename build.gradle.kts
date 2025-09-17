@@ -15,14 +15,12 @@ java {
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        url = uri("https://repo.spring.io/snapshot")
-    }
+    mavenCentral()
 
-    maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
-    }
+    maven { url = uri("https://repo.spring.io/snapshot") }
+
+    maven { url = uri("https://repo.maven.apache.org/maven2/") }
+
 }
 
 extra["springModulithVersion"] = "2.0.0-M3"
