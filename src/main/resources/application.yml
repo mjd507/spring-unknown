@@ -27,7 +27,7 @@ spring:
     init:
       enabled: true
 #      schema-locations: classpath:schema.sql
-      data-locations: classpath:people.sql
+#      data-locations: classpath:people.sql
   # 配置数据源信息
 #  datasource:
 #    driverClassName: com.mysql.cj.jdbc.Driver
