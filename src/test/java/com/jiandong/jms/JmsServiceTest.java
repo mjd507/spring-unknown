@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.activemq.autoconfigure.ActiveMQAutoConfiguration;
 import org.springframework.boot.jms.autoconfigure.JmsAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jms.connection.CachingConnectionFactory;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,15 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 		ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class,
 		JmsConfig.class, JmsService.class
 })
-class JmsIntegrationTest {
+@DirtiesContext
+class JmsServiceTest {
 
-	private static final Logger log = LoggerFactory.getLogger(JmsIntegrationTest.class);
+	private static final Logger log = LoggerFactory.getLogger(JmsServiceTest.class);
 
 	@Autowired JmsService jmsService;
 
 	@Autowired Destination amqDestination;
-
-	@Autowired CachingConnectionFactory connectionFactory;
 
 	@Test
 	void happyFlow() throws InterruptedException {
@@ -46,7 +45,6 @@ class JmsIntegrationTest {
 		jmsService.send(amqDestination, new JmsService.Email("jiandong@test.com", "hello~"));
 		latch.await();
 		// Then
-		connectionFactory.destroy();
 		assertThat(consumed).isTrue();
 	}
 

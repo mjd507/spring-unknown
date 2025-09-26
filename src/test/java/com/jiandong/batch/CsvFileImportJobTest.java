@@ -31,7 +31,8 @@ import static org.mockito.Mockito.doAnswer;
 @ImportAutoConfiguration(classes = {
 		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
 		BatchAutoConfiguration.class,
-		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,})
+		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,
+})
 public class CsvFileImportJobTest {
 
 	@Autowired @Qualifier("CsvJob") Job csvFileImportJob;
@@ -59,7 +60,9 @@ public class CsvFileImportJobTest {
 		jobOperator.start(csvFileImportJob, jobParameters);
 		latch.await(); // until listener finished
 		// Then
-		var personList = jdbcClient.sql("select * from people").query(CsvFileImportJob.Person.class).list();
+		var personList = jdbcClient.sql("select * from people")
+				.query(CsvFileImportJob.Person.class)
+				.list();
 		Assertions.assertThat(personList)
 				.hasSize(5)
 				.last()
