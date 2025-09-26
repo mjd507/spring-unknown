@@ -1,0 +1,12 @@
+spring:
+  activemq:
+    broker-url: vm://localhost?broker.persistent=false
+  batch:
+    job:
+      enabled: false  # prevent auto-launch the only one job
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb;NON_KEYWORDS=user
+    username: root
+    password: root
+    hikari:

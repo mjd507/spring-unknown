@@ -10,6 +10,7 @@ import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -26,15 +27,11 @@ import org.springframework.test.context.jdbc.Sql;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 
-@SpringBootTest(classes = {
-		CsvFileImportJob.class, CsvFileListener.class,
-		CsvItemReader.class, CsvItemProcessor.class, CsvItemWriter.class
-})
+@SpringBootTest(classes = {CsvFileImportJob.class})
 @ImportAutoConfiguration(classes = {
 		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
 		BatchAutoConfiguration.class,
-		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,
-})
+		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,})
 public class CsvFileImportJobTest {
 
 	@Autowired @Qualifier("CsvJob") Job csvFileImportJob;
@@ -42,30 +39,27 @@ public class CsvFileImportJobTest {
 	@Autowired JobOperator jobOperator;
 
 	@MockitoBean
-	CsvFileListener csvFileListener; // mock this bean - to know the lifecycle of the integration testing
+	JobExecutionListener csvFileListener; // mock this bean - to know the lifecycle of the integration testing
 
 	@Autowired JdbcClient jdbcClient; // for verifing job results
 
 	@Test
 	@Sql(scripts = "classpath:people.sql")
 	void happyScenario() throws Exception {
+		// Given
 		CountDownLatch latch = new CountDownLatch(1);
 		doAnswer(invocation -> {
-			latch.countDown();
-			return null;
+			latch.countDown(); return null;
 		}).when(csvFileListener).afterJob(any(JobExecution.class));
 
 		JobParameters jobParameters = new JobParametersBuilder()
 				.addString("csvFilePath", "src/test/resources/batch-data.csv")
 				.toJobParameters();
-
+		// When
 		jobOperator.start(csvFileImportJob, jobParameters);
-
 		latch.await(); // until listener finished
-
-		var personList = jdbcClient.sql("select * from people")
-				.query(Person.class)
-				.list();
+		// Then
+		var personList = jdbcClient.sql("select * from people").query(CsvFileImportJob.Person.class).list();
 		Assertions.assertThat(personList)
 				.hasSize(5)
 				.last()
