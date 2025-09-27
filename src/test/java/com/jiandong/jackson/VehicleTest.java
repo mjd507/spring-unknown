@@ -2,11 +2,10 @@ package com.jiandong.jackson;
 
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -31,9 +30,9 @@ public class VehicleTest {
 
 	@ParameterizedTest
 	@MethodSource("vehicleProvider")
-	void testVehicleJson(Vehicle vehicle, String type) throws JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		String jsonStr = objectMapper.writeValueAsString(vehicle);
+	void testVehicleJson(Vehicle vehicle, String type) {
+		JsonMapper jsonMapper = new JsonMapper();
+		String jsonStr = jsonMapper.writeValueAsString(vehicle);
 		//{"type":"car","make":"Mercedes-Benz","model":"S500","seatingCapacity":5,"topSpeed":250.0}
 		//{"type":"truck","make":"Isuzu","model":"NQR","payloadCapacity":7500.0}
 		assertTrue(jsonStr.contains(type));
