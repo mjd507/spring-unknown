@@ -33,7 +33,7 @@ import static org.mockito.Mockito.doAnswer;
 		BatchAutoConfiguration.class,
 		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,
 })
-public class CsvFileImportJobTest {
+class CsvFileImportJobTest {
 
 	@Autowired @Qualifier("CsvJob") Job csvFileImportJob;
 

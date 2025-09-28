@@ -2,7 +2,7 @@ package com.jiandong;
 
 import org.junit.jupiter.api.Test;
 
-public class ApplicationTest {
+class ApplicationTest {
 
     String[] args() {
         return new String[] {

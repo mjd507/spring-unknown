@@ -1,4 +1,4 @@
-package com.jiandong.jpa;
+package com.jiandong.core.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

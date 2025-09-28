@@ -11,16 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.activemq.autoconfigure.ActiveMQAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.jms.autoconfigure.JmsAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {
-		ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class,
-		JmsConfig.class, JmsService.class
-})
+@SpringBootTest(classes = {JmsService.class, JmsConfig.class,})
+@ImportAutoConfiguration(classes = {ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class,})
 @DirtiesContext
 class JmsServiceTest {
 

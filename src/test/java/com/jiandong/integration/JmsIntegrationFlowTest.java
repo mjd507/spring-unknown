@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.activemq.autoconfigure.ActiveMQAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.jms.autoconfigure.JmsAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.integration.channel.QueueChannel;
@@ -15,12 +16,10 @@ import org.springframework.jms.core.JmsClient;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 
-@SpringBootTest(classes = {
-		JmsIntegrationFlow.class,
-		JmsConfig.class, ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class,
-})
+@SpringBootTest(classes = {JmsIntegrationFlow.class, JmsConfig.class})
+@ImportAutoConfiguration(classes = {ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class})
 @DirtiesContext
-public class JmsIntegrationFlowTest {
+class JmsIntegrationFlowTest {
 
 	@Autowired Destination amqDestination;
 

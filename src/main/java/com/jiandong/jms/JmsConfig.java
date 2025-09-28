@@ -16,7 +16,7 @@ import org.springframework.jms.support.converter.MessageType;
 public class JmsConfig {
 
 	@Bean // Serialize message content to json using TextMessage
-	public MessageConverter jacksonJmsMessageConverter() {
+	public MessageConverter jacksonJsonMessageConverter() {
 		JacksonJsonMessageConverter converter = new JacksonJsonMessageConverter();
 		converter.setTargetType(MessageType.TEXT);
 		converter.setTypeIdPropertyName("_type");

@@ -1,4 +1,4 @@
-package com.jiandong.jackson;
+package com.jiandong.core.jackson;
 
 import java.util.stream.Stream;
 

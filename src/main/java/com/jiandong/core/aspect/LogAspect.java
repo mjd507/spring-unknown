@@ -1,4 +1,4 @@
-package com.jiandong.aop;
+package com.jiandong.core.aspect;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogAspect {
 
-	private final Logger log = LoggerFactory.getLogger(LogAspect.this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
 
-	@Pointcut("@annotation(com.jiandong.aop.Log)")
+	@Pointcut("@annotation(com.jiandong.core.aop.Log)")
 	public void logPointcut() {
 	}
 
@@ -27,11 +27,8 @@ public class LogAspect {
 	public void log(JoinPoint joinPoint) {
 		MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 		Method method = methodSignature.getMethod();
-		log.info(String.format("before execute method: %s, parameters: %s, argus:%s",
-				method.getName(),
-				Arrays.toString(method.getParameters()),
-				Arrays.toString(joinPoint.getArgs()))
-		);
+		log.info("before execute method: {}, args:{}", method.getName(),
+				Arrays.toString(joinPoint.getArgs()));
 	}
 
 }
