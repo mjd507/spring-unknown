@@ -1,6 +1,10 @@
 package com.jiandong.security;
 
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,7 +12,6 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -19,13 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -35,75 +32,68 @@ import static org.springframework.security.config.Customizer.withDefaults;
 //@EnableGlobalAuthentication
 public class WebSecurityConfig {
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (webSecurity) -> {
-            EndpointRequest.EndpointRequestMatcher anyEndpoint = EndpointRequest.toAnyEndpoint();
-            List<RequestMatcher> reqMatchers = new ArrayList<>() {{
-                add(new AntPathRequestMatcher("/ws/**"));
-                add(new AntPathRequestMatcher("/h2*/**"));
-                add(anyEndpoint);
-            }};
-            webSecurity.ignoring().requestMatchers(reqMatchers.toArray(RequestMatcher[]::new));
-        };
-    }
+	private static final Logger log = LoggerFactory.getLogger(WebSecurityConfig.class);
 
-    @Bean
-    public CustomAuthenticationProcessingFilter authenticationProcessingFilter() {
-        CustomAuthenticationProcessingFilter authenticationProcessingFilter = new CustomAuthenticationProcessingFilter(authenticationManager());
-        authenticationProcessingFilter.setAuthenticationSuccessHandler(new SuccessHandler());
-        authenticationProcessingFilter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
-        return authenticationProcessingFilter;
-    }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+				.csrf(AbstractHttpConfigurer::disable)
+				.authenticationManager(authenticationManager())
+				.httpBasic(withDefaults()) // BasicAuthenticationFilter
+//				.formLogin(withDefaults()) // UsernamePasswordAuthenticationFilter
+//				.rememberMe(withDefaults()) // RememberMeAuthenticationFilter
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers(PathPatternRequestMatcher.pathPattern("/public/**")).permitAll()
+						.requestMatchers(PathPatternRequestMatcher.pathPattern("/h2*/**")).permitAll()
+						.requestMatchers(PathPatternRequestMatcher.pathPattern("/ws/**")).permitAll()
+						.anyRequest().authenticated()
+				)
+//                .x509(httpSecurityX509Configurer -> {
+//                    httpSecurityX509Configurer.subjectPrincipalRegex("CN=(.*?)(?:,|$)");
+//                    httpSecurityX509Configurer.userDetailsService(x509UserDetailService());
+//                })
+		;
+		return http.build();
+	}
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .addFilterAt(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()
-                )
-                .csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(withDefaults())
-                .x509(httpSecurityX509Configurer -> {
-                    httpSecurityX509Configurer.subjectPrincipalRegex("CN=(.*?)(?:,|$)");
-                    httpSecurityX509Configurer.userDetailsService(x509UserDetailService());
-                })
-        ;
-        return http.build();
-    }
+	@Bean
+	public UserDetailsService x509UserDetailService() {
+		return username -> {
+			System.out.println("certificate common name (CN) : " + username);
+			if (username.equals("Bob")) {
+				return new User("user", "pwd", AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
+			}
+			throw new UsernameNotFoundException("User not found!");
+		};
+	}
 
-    @Bean
-    public UserDetailsService x509UserDetailService() {
-        return username -> {
-            System.out.println("certificate common name (CN) : " + username);
-            if (username.equals("Bob")) {
-                return new User("user", "pwd", AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
-            }
-            throw new UsernameNotFoundException("User not found!");
-        };
-    }
+	@Bean
+	public AuthenticationManager authenticationManager() {
+		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService());
+		authenticationProvider.setPasswordEncoder(passwordEncoder());
+		ProviderManager providerManager = new ProviderManager(authenticationProvider);
+		providerManager.setEraseCredentialsAfterAuthentication(true);
+		return providerManager;
+	}
 
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(authenticationProvider);
-    }
+	@Bean
+	public UserDetailsService userDetailsService() {
+		UserDetails user = User.withUsername("user")
+				.password(passwordEncoder().encode("user_pwd"))
+				// base64(user:user_pwd): dXNlcjokMmEkMTAkRGZ5Ylk5dmJiQ1hySnF2cmw2RUhFT0JzdW1WbVpTaUtsQ0J6REhoZUQzaWNySi5UNHJ1cU8=
+				.roles("USER")
+				.build();
+		UserDetails admin = User.withUsername("admin")
+				.password(passwordEncoder().encode("admin_pwd"))
+				// base64(admin:admin_pwd): YWRtaW46YWRtaW5fcHdk
+				.roles("ADMIN")
+				.build();
+		return new InMemoryUserDetailsManager(List.of(user, admin));
+	}
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User
-                .withUsername("user")
-                .password(passwordEncoder().encode("pwd"))
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(userDetails);
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
