@@ -18,7 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {JmsService.class, JmsConfig.class,})
+@SpringBootTest(classes = {JmsService.class, JmsConfig.class, JmsQueues.class})
 @ImportAutoConfiguration(classes = {ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class,})
 @DirtiesContext
 class JmsServiceTest {
@@ -27,7 +27,7 @@ class JmsServiceTest {
 
 	@Autowired JmsService jmsService;
 
-	@Autowired Destination amqDestination;
+	@Autowired Destination amq;
 
 	@Test
 	void happyFlow() throws InterruptedException {
@@ -41,7 +41,7 @@ class JmsServiceTest {
 		};
 		jmsService.setMsgConsumer(consumer);
 		// When
-		jmsService.send(amqDestination, new JmsService.Email("jiandong@test.com", "hello~"));
+		jmsService.send(amq, new JmsService.Email("jiandong@test.com", "hello~"));
 		latch.await();
 		// Then
 		assertThat(consumed).isTrue();

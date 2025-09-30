@@ -1,7 +1,6 @@
 package com.jiandong.integration;
 
 import jakarta.jms.ConnectionFactory;
-import jakarta.jms.Destination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.json.JsonMapper;
@@ -21,16 +20,10 @@ public class JmsIntegrationFlow {
 
 	private static final JsonMapper jsonMapper = new JsonMapper();
 
-	private final Destination amqDestination;
-
-	public JmsIntegrationFlow(Destination amqDestination) {
-		this.amqDestination = amqDestination;
-	}
-
 	@Bean
 	public IntegrationFlow messageDrivenFlow(ConnectionFactory connectionFactory) {
 		return IntegrationFlow.from(Jms.messageDrivenChannelAdapter(connectionFactory)
-						.destination(amqDestination))
+						.destination("eipQueue"))
 				.transform(String.class, source -> jsonMapper.readValue(source, Point.class))
 				.handle(Point.class, (payload, headers) ->
 						new Point(payload.x * 2, payload.y * 2))

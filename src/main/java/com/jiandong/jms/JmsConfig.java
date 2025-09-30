@@ -1,9 +1,5 @@
 package com.jiandong.jms;
 
-import jakarta.jms.Destination;
-import jakarta.jms.Queue;
-import org.apache.activemq.command.ActiveMQQueue;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
@@ -21,11 +17,6 @@ public class JmsConfig {
 		converter.setTargetType(MessageType.TEXT);
 		converter.setTypeIdPropertyName("_type");
 		return converter;
-	}
-
-	@Bean
-	public Destination amqDestination() {
-		return new ActiveMQQueue("amq");
 	}
 
 }

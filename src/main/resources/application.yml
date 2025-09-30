@@ -20,7 +20,7 @@ spring:
     virtual:
       enabled: true
   activemq:
-    broker-url: vm://localhost?broker.persistent=false
+    broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
   batch:
     jdbc:
       initialize-schema: always  # 自动创建 batch 相关表
