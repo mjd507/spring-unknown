@@ -35,9 +35,9 @@ public class JmsIntegrationFlow {
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj instanceof Point p2
-					&& x == p2.x
-					&& y == p2.y;
+			return obj instanceof Point(int x1, int y1)
+					&& x == x1
+					&& y == y1;
 		}
 
 	}
