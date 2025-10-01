@@ -60,7 +60,7 @@ public class CsvFileImportJob {
 	@Bean
 	public Step csvFileImportStep(JobRepository jobRepository) {
 		return new StepBuilder("CsvFileStepBuilder", jobRepository)
-				.<Person, Person>chunk(1)
+				.<Employee, Employee>chunk(1)
 				.reader(csvItemReader())
 				.processor(csvItemProcessor())
 				.writer(csvItemWriter())
@@ -70,7 +70,7 @@ public class CsvFileImportJob {
 
 	@Bean
 	@StepScope
-	public FlatFileItemReader<Person> csvItemReader() {
+	public FlatFileItemReader<Employee> csvItemReader() {
 		return new FlatFileItemReader<>() {
 
 			@Value("#{jobParameters['csvFilePath']}")
@@ -90,15 +90,15 @@ public class CsvFileImportJob {
 				setSkippedLinesCallback(s -> log.info("skip first line: {}", s));
 			}
 
-			private LineMapper<Person> lineMapper() {
+			private LineMapper<Employee> lineMapper() {
 				DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
 				delimitedLineTokenizer.setDelimiter(",");
-				delimitedLineTokenizer.setNames(Arrays.stream(Person.class.getDeclaredFields())
+				delimitedLineTokenizer.setNames(Arrays.stream(Employee.class.getDeclaredFields())
 						.map(Field::getName).toArray(String[]::new));
-				DefaultLineMapper<Person> defaultLineMapper = new DefaultLineMapper<>();
+				DefaultLineMapper<Employee> defaultLineMapper = new DefaultLineMapper<>();
 				defaultLineMapper.setLineTokenizer(delimitedLineTokenizer);
 
-				RecordFieldSetMapper<Person> fieldSetMapper = new RecordFieldSetMapper<>(Person.class);
+				RecordFieldSetMapper<Employee> fieldSetMapper = new RecordFieldSetMapper<>(Employee.class);
 				defaultLineMapper.setFieldSetMapper(fieldSetMapper);
 				return defaultLineMapper;
 			}
@@ -126,21 +126,21 @@ public class CsvFileImportJob {
 	}
 
 	@Bean
-	ItemProcessor<Person, Person> csvItemProcessor() {
-		return person -> {
-			String firstName = person.firstName().toUpperCase();
-			String lastName = person.lastName().toUpperCase();
+	ItemProcessor<Employee, Employee> csvItemProcessor() {
+		return employee -> {
+			String firstName = employee.firstName().toUpperCase();
+			String lastName = employee.lastName().toUpperCase();
 
-			Person transformedPerson = new Person(firstName, lastName);
+			Employee transformedEmployee = new Employee(firstName, lastName);
 
-			log.info("Converting (" + person + ") into (" + transformedPerson + ")");
+			log.info("Converting (" + employee + ") into (" + transformedEmployee + ")");
 
-			return transformedPerson;
+			return transformedEmployee;
 		};
 	}
 
 	@Bean
-	ItemWriter<Person> csvItemWriter() {
+	ItemWriter<Employee> csvItemWriter() {
 		return new JdbcBatchItemWriter<>() {
 
 			@Override
@@ -152,12 +152,12 @@ public class CsvFileImportJob {
 			private void initWriter() {
 				this.setDataSource(dataSource);
 				this.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-				this.setSql("INSERT INTO people (first_name, last_name) VALUES (:firstName, :lastName)");
+				this.setSql("INSERT INTO employee (first_name, last_name) VALUES (:firstName, :lastName)");
 			}
 		};
 	}
 
-	public record Person(String firstName, String lastName) {
+	public record Employee(String firstName, String lastName) {
 
 	}
 

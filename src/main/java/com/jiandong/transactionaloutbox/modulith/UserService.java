@@ -1,4 +1,4 @@
-package com.jiandong.outbox;
+package com.jiandong.transactionaloutbox.modulith;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
