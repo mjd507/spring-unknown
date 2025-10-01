@@ -1,4 +1,4 @@
-package com.jiandong.outbox;
+package com.jiandong.transactionaloutbox.modulith;
 
 import ch.qos.logback.core.testUtil.RandomUtil;
 import org.slf4j.Logger;

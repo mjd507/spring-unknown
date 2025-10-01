@@ -45,7 +45,7 @@ class CsvFileImportJobTest {
 	@Autowired JdbcClient jdbcClient; // for verifing job results
 
 	@Test
-	@Sql(scripts = "classpath:people.sql")
+	@Sql(scripts = "classpath:batch/employee.sql")
 	void happyScenario() throws Exception {
 		// Given
 		CountDownLatch latch = new CountDownLatch(1);
@@ -54,19 +54,19 @@ class CsvFileImportJobTest {
 		}).when(csvFileListener).afterJob(any(JobExecution.class));
 
 		JobParameters jobParameters = new JobParametersBuilder()
-				.addString("csvFilePath", "src/test/resources/batch-data.csv")
+				.addString("csvFilePath", "src/test/resources/batch/batch-data.csv")
 				.toJobParameters();
 		// When
 		jobOperator.start(csvFileImportJob, jobParameters);
 		latch.await(); // until listener finished
 		// Then
-		var personList = jdbcClient.sql("select * from people")
-				.query(CsvFileImportJob.Person.class)
+		var personList = jdbcClient.sql("select * from employee")
+				.query(CsvFileImportJob.Employee.class)
 				.list();
 		Assertions.assertThat(personList)
 				.hasSize(5)
 				.last()
-				.extracting(person -> person.firstName())
+				.extracting(employee -> employee.firstName())
 				.isEqualTo("E");
 	}
 
