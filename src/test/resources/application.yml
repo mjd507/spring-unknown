@@ -2,21 +2,24 @@ spring:
   threads:
     virtual:
       enabled: true
-  activemq:
-    broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
-  batch:
-    jdbc:
-      initialize-schema: always  # 自动创建 batch 相关表
-    job:
-      enabled: false  # prevent auto-launch the only one job
   datasource:
     driverClassName: org.h2.Driver
     url: jdbc:h2:mem:testdb
     username: root
     password: root
     hikari:
+  activemq:
+    broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
+  integration:
+    jdbc:
+      initialize-schema: always  # auto create integration related tables
+  batch:
+    jdbc:
+      initialize-schema: always # auto create for test
+    job:
+      enabled: false  # prevent auto-launch the only one job
   modulith:
     events:
       jdbc:
         schema-initialization:
-          enabled: true # create a dedicated table for the event publication log
+          enabled: true # always create for test
