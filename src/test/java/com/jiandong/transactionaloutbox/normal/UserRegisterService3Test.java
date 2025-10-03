@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.jiandong.transactionaloutbox.UserRegister;
+import com.jiandong.transactionaloutbox.UserRegisterDao;
 import com.jiandong.transactionaloutbox.UserRegisterReq;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.Nullable;
@@ -25,8 +26,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootTest(classes = {
-		UserRegisterNotifyFlow3.class, UserRegisterDao.class, OutboxEventDao.class,
-		NotifyService.class, UserRegisterNotifyFlow3Test.UserRegisterCaller.class
+		UserRegisterService3.class, UserRegisterDao.class, OutboxEventDao.class,
+		NotifyService3.class, UserRegisterService3Test.UserRegisterCaller.class
 })
 @ImportAutoConfiguration(classes = {
 		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
@@ -34,7 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableTransactionManagement
 @DirtiesContext
-class UserRegisterNotifyFlow3Test {
+class UserRegisterService3Test {
 
 	@Autowired UserRegisterCaller userRegisterCaller;
 
@@ -59,7 +60,7 @@ class UserRegisterNotifyFlow3Test {
 		// THEN
 		UserRegister user = userRegisterDao.findUser("jiandong-1");
 		Assertions.assertThat(user).isNotNull();
-		List<OutboxEvent> outboxEvents = outboxEventDao.listNonCompletedEvents();
+		List<OutboxEvent> outboxEvents = outboxEventDao.listNonCompletedEvents(null);
 		Assertions.assertThat(outboxEvents)
 				.hasSize(1);
 	}
@@ -79,7 +80,7 @@ class UserRegisterNotifyFlow3Test {
 		// THEN
 		UserRegister user = userRegisterDao.findUser("jiandong-2");
 		Assertions.assertThat(user).isNotNull();
-		List<OutboxEvent> outboxEvents = outboxEventDao.listNonCompletedEvents();
+		List<OutboxEvent> outboxEvents = outboxEventDao.listNonCompletedEvents(null);
 		Assertions.assertThat(outboxEvents).isEmpty();
 		List<@Nullable OutboxEvent> events = jdbcClient.sql("select * from outbox_event")
 				.query(OutboxEvent.class)
@@ -90,14 +91,14 @@ class UserRegisterNotifyFlow3Test {
 	@Component
 	static class UserRegisterCaller {
 
-		private final UserRegisterNotifyFlow3 UserRegisterNotifyFlow3;
+		private final UserRegisterService3 UserRegisterService3;
 
-		UserRegisterCaller(UserRegisterNotifyFlow3 UserRegisterNotifyFlow3) {
-			this.UserRegisterNotifyFlow3 = UserRegisterNotifyFlow3;
+		UserRegisterCaller(UserRegisterService3 UserRegisterService3) {
+			this.UserRegisterService3 = UserRegisterService3;
 		}
 
 		public void callRegisterUser(UserRegisterReq registerReq) {
-			UserRegisterNotifyFlow3.register(registerReq);
+			UserRegisterService3.register(registerReq);
 		}
 
 	}

@@ -1,10 +1,7 @@
-package com.jiandong.transactionaloutbox.normal;
+package com.jiandong.transactionaloutbox;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import com.jiandong.transactionaloutbox.UserRegister;
-import com.jiandong.transactionaloutbox.UserRegisterReq;
 
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
