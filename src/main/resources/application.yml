@@ -1,49 +1,44 @@
 server:
   port: 8080
-  ssl:
-    key-store: /Users/majiandong/Documents/project/spring-learning/ca/keystore.jks
-    key-store-password: changeit
-    key-alias: localhost
-    key-password: changeit
-    enabled: false
-    trust-store: /Users/majiandong/Documents/project/spring-learning/ca/truststore.jks
-    trust-store-password: changeit
-    client-auth: need
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
 spring:
   threads:
     virtual:
       enabled: true
-  activemq:
-    broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
-  batch:
-    jdbc:
-      initialize-schema: always  # 自动创建 batch 相关表
-    job:
-      enabled: false
-  sql:
-    init:
-      enabled: true
-      schema-locations: classpath:schema/*/*.sql
-      # data-locations: classpath:data/*/*.sql
-  h2:
-    console.enabled: true
   datasource:
     driverClassName: org.h2.Driver
     url: jdbc:h2:mem:testdb
     username: root
     password: root
     hikari:
+  sql:
+    init:
+      enabled: true
+      schema-locations: classpath:schema/**/*.sql
+      # data-locations: classpath:data/*/*.sql
+  h2:
+    console.enabled: true
+  activemq:
+    broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
+  integration:
+    jdbc:
+      initialize-schema: never  # never auto create integration related tables
+  batch:
+    jdbc:
+      initialize-schema: never  # never auto create batch related tables
+    job:
+      enabled: false
   modulith:
     events:
       jdbc:
         schema-initialization:
-          enabled: false # create a dedicated table for the event publication log
+          enabled: false # do not auto create table for event publication
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 
 decorator:
   datasource:

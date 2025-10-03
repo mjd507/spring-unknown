@@ -1,6 +1,5 @@
-package com.jiandong.transactionaloutbox.modulith;
+package com.jiandong.transactionaloutbox.eip;
 
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -13,39 +12,35 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
+import org.springframework.boot.integration.autoconfigure.IntegrationAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.modulith.events.config.EnablePersistentDomainEvents;
-import org.springframework.modulith.events.core.TargetEventPublication;
-import org.springframework.modulith.events.jdbc.SpringModulithAutoImportAdapter;
-import org.springframework.stereotype.Component;
+import org.springframework.integration.jdbc.store.JdbcChannelMessageStore;
+import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootTest(classes = {
-		UserRegisterService2.class, NotifyService2.class,
-		UserRegisterDao.class, UserRegisterService2Test.UserRegisterCaller.class,
-		EventPublicationService.class
+		UserRegisterNotifyFlow.class, UserRegisterService1.class, UserRegisterDao.class
 })
 @ImportAutoConfiguration(classes = {
+		IntegrationAutoConfiguration.class,
 		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
 		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class, TaskExecutionAutoConfiguration.class,
-		SpringModulithAutoImportAdapter.class
 })
-@EnablePersistentDomainEvents
 @EnableTransactionManagement
 @DirtiesContext
-class UserRegisterService2Test {
+class UserRegisterNotifyFlowTest {
 
-	@Autowired UserRegisterService2Test.UserRegisterCaller userRegisterCaller;
+	@Autowired UserRegisterService1 userRegisterService1;
 
 	@Autowired UserRegisterDao userRegisterDao;
 
-	@Autowired EventPublicationService eventPublicationService;
+	@Autowired JdbcChannelMessageStore jdbcChannelMessageStore;
 
 	@Sql(scripts = {"classpath:transactionaloutbox/user_register.sql"})
 	@Test
@@ -54,14 +49,18 @@ class UserRegisterService2Test {
 		CountDownLatch latch = new CountDownLatch(1);
 		var registerReq = new UserRegisterReq("jiandong-1", "jiandong-1@abc.com");
 		// WHEN
-		userRegisterCaller.callRegisterUser(registerReq);
+		userRegisterService1.register(registerReq);
 		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
 		// THEN
 		UserRegister user = userRegisterDao.findUser("jiandong-1");
 		Assertions.assertThat(user).isNotNull();
-		List<TargetEventPublication> inCompleteEvents = eventPublicationService.listInCompleteEvents();
-		Assertions.assertThat(inCompleteEvents)
-				.hasSize(1);
+		Message<?> message = jdbcChannelMessageStore.pollMessageFromGroup("registered-user");
+		Assertions.assertThat(message)
+				.isNotNull()
+				.extracting(Message::getPayload)
+				.isExactlyInstanceOf(UserRegister.class)
+				.extracting("email")
+				.isEqualTo("jiandong-1@abc.com");
 	}
 
 	@Sql(scripts = {"classpath:transactionaloutbox/user_register.sql"})
@@ -71,29 +70,11 @@ class UserRegisterService2Test {
 		CountDownLatch latch = new CountDownLatch(1);
 		var registerReq = new UserRegisterReq("jiandong-2", "jiandong-2@cn.com");
 		// WHEN
-		userRegisterCaller.callRegisterUser(registerReq);
+		userRegisterService1.register(registerReq);
 		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
 		// THEN
-		UserRegister user = userRegisterDao.findUser("jiandong-2");
-		Assertions.assertThat(user).isNotNull();
-
-		List<TargetEventPublication> completeEvents = eventPublicationService.listCompleteEvents();
-		Assertions.assertThat(completeEvents).hasSize(1);
-	}
-
-	@Component
-	static class UserRegisterCaller {
-
-		private final UserRegisterService2 userRegisterService2;
-
-		UserRegisterCaller(UserRegisterService2 userRegisterService2) {
-			this.userRegisterService2 = userRegisterService2;
-		}
-
-		public void callRegisterUser(UserRegisterReq registerReq) {
-			userRegisterService2.register(registerReq);
-		}
-
+		Message<?> message = jdbcChannelMessageStore.pollMessageFromGroup("registered-user");
+		Assertions.assertThat(message).isNull();
 	}
 
 }
