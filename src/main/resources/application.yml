@@ -29,32 +29,21 @@ spring:
   sql:
     init:
       enabled: true
-#      schema-locations: classpath:schema.sql
-#      data-locations: classpath:people.sql
-  # 配置数据源信息
-#  datasource:
-#    driverClassName: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/wxapp?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
-#    username: root
-#    password: root
+      schema-locations: classpath:schema/*/*.sql
+      # data-locations: classpath:data/*/*.sql
   h2:
     console.enabled: true
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb;NON_KEYWORDS=user
+    url: jdbc:h2:mem:testdb
     username: root
     password: root
     hikari:
-#      auto-commit: false
-  jpa:
-#    open-in-view: false
-    show-sql: true
-    hibernate:
-      ddl-auto: create
-      naming:
-        #指定jpa的自动表生成策略，驼峰自动映射为下划线格式
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-        #physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: false # create a dedicated table for the event publication log
 
 decorator:
   datasource:

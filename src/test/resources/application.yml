@@ -5,11 +5,18 @@ spring:
   activemq:
     broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
   batch:
+    jdbc:
+      initialize-schema: always  # 自动创建 batch 相关表
     job:
       enabled: false  # prevent auto-launch the only one job
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb;NON_KEYWORDS=user
+    url: jdbc:h2:mem:testdb
     username: root
     password: root
     hikari:
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: true # create a dedicated table for the event publication log

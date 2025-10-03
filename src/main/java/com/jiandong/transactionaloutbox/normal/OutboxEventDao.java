@@ -30,23 +30,18 @@ public class OutboxEventDao {
 		return new OutboxEvent(Objects.requireNonNull(eventKeyHolder.getKey()).intValue(), eventType, eventBody, now, null);
 	}
 
-	public boolean completeOutboxEvent(OutboxEvent outboxEvent) {
-		int update = jdbcClient.sql("update outbox_event set complete_date = :completeDate where id = :id")
+	public void completeOutboxEvent(OutboxEvent outboxEvent) {
+		jdbcClient.sql("update outbox_event set complete_date = :completeDate where id = :id")
 				.param("id", outboxEvent.id())
 				.param("completeDate", LocalDateTime.now())
 				.update();
-		return update > 0;
 	}
 
-	public List<OutboxEvent> listNonCompletedEvents() {
-		return jdbcClient.sql("select * from outbox_event where complete_date is null")
-				.query(OutboxEvent.class)
-				.list();
-	}
-
-	public List<OutboxEvent> listNonCompletedEventsForScheduler() {
+	public List<OutboxEvent> listNonCompletedEvents(LocalDateTime lastEventDate) {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime eventDate = lastEventDate == null ? now : now.minusMinutes(3);
 		return jdbcClient.sql("select * from outbox_event where complete_date is null and event_date <= :eventDate")
-				.param("eventDate", LocalDateTime.now().minusMinutes(3))
+				.param("eventDate", eventDate)
 				.query(OutboxEvent.class)
 				.list();
 	}
