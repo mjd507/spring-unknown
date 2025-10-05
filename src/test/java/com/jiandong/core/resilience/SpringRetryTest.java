@@ -1,11 +1,10 @@
-package com.jiandong.core;
+package com.jiandong.core.resilience;
 
-import com.jiandong.core.resilience.SpringRetry;
-import com.jiandong.core.resilience.ThirtyPartyService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -16,6 +15,7 @@ import static org.mockito.Mockito.verify;
 @SpringJUnitConfig(classes = {
 		SpringRetry.class, ThirtyPartyService.class
 })
+@DirtiesContext
 class SpringRetryTest {
 
 	@Autowired SpringRetry springRetry;
