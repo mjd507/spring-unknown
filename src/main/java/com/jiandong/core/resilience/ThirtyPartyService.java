@@ -17,6 +17,15 @@ public class ThirtyPartyService {
 		log.info("retrieving data from thirty party service...");
 	}
 
+	public void slowMethod() {
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static class UnexpectedException extends RuntimeException {
 
 	}
