@@ -23,3 +23,10 @@ spring:
       jdbc:
         schema-initialization:
           enabled: true # always create for test
+
+
+logging:
+  level:
+    org.springframework:
+      web.socket.messaging: DEBUG
+      messaging.simp: DEBUG

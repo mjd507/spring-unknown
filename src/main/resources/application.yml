@@ -34,6 +34,12 @@ spring:
         schema-initialization:
           enabled: false # do not auto create table for event publication
 
+logging:
+  level:
+    org.springframework:
+      web.socket.messaging: INFO
+      messaging.simp: INFO
+
 management:
   endpoints:
     web:
