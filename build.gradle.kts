@@ -24,6 +24,7 @@ repositories {
 }
 
 extra["springModulithVersion"] = "2.0.0-M3"
+extra["okHttpMockwebserver3"] = "5.1.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -45,6 +46,7 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     // runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.squareup.okhttp3:mockwebserver3:${property("okHttpMockwebserver3")}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
