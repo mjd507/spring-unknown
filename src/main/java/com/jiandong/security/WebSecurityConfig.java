@@ -48,7 +48,6 @@ public class WebSecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(PathPatternRequestMatcher.pathPattern("/public/**")).permitAll()
 						.requestMatchers(PathPatternRequestMatcher.pathPattern("/h2*/**")).permitAll()
-						.requestMatchers(PathPatternRequestMatcher.pathPattern("/ws/**")).permitAll()
 						.anyRequest().authenticated()
 				)
 //                .x509(httpSecurityX509Configurer -> {
@@ -83,7 +82,7 @@ public class WebSecurityConfig {
 	public UserDetailsService userDetailsService() {
 		UserDetails user = User.withUsername("user")
 				.password(passwordEncoder().encode("user_pwd"))
-				// base64(user:user_pwd): dXNlcjokMmEkMTAkRGZ5Ylk5dmJiQ1hySnF2cmw2RUhFT0JzdW1WbVpTaUtsQ0J6REhoZUQzaWNySi5UNHJ1cU8=
+				// base64(user:user_pwd): dXNlcjp1c2VyX3B3ZA==
 				.roles("USER")
 				.build();
 		UserDetails admin = User.withUsername("admin")

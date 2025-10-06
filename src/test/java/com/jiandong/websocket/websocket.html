@@ -1,0 +1,44 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<script>
+    const sock = new SockJS('http://localhost:8080/websocket/connect');
+    const stompClient = Stomp.over(sock);
+
+    stompClient.connect({
+        "Authorization": "Basic dXNlcjp1c2VyX3B3ZA==",
+    }, (frame) => {
+        console.log('Connected: ' + frame);
+
+        <!--  subscribe topic message   -->
+        stompClient.subscribe('/topic/messages', (message) => {
+            console.log('Received From Topic: ' + message.body);
+        });
+
+        setTimeout(() => {
+                stompClient.send("/app/send-to-all", {}, JSON.stringify({"from":"topic", "text":"abc"}));
+        })
+
+        <!--  subscribe queue(user only) message          -->
+        stompClient.subscribe('/user/queue/messages', (message) => {
+            console.log('Received From Queue: ' + message.body);
+        });
+        <!--  send message to user       -->
+        setTimeout(() => {
+                stompClient.send("/app/send-to-user", {}, JSON.stringify({"from":'queue'}));
+        })
+
+    });
+</script>
+
+hello
+
+</body>
+</html>
