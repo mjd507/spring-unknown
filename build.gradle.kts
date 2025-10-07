@@ -27,7 +27,7 @@ extra["springModulithVersion"] = "2.0.0-M3"
 extra["okHttpMockwebserver3"] = "5.1.0"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-h2console")
@@ -57,5 +57,8 @@ dependencyManagement {
 }
 
 tasks.withType<Test> {
+
+    testLogging.showStandardStreams = true
+
     useJUnitPlatform()
 }

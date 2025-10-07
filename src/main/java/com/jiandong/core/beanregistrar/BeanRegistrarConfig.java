@@ -1,0 +1,43 @@
+package com.jiandong.core.beanregistrar;
+
+import org.springframework.beans.factory.BeanRegistrar;
+import org.springframework.beans.factory.BeanRegistry;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
+
+@Configuration
+@Import(BeanRegistrarConfig.DynamicBeanRegistrar.class)
+public class BeanRegistrarConfig {
+
+	static class DynamicBeanRegistrar implements BeanRegistrar {
+
+		@Override
+		public void register(BeanRegistry registry, Environment env) {
+			registry.registerBean(Foo.class);
+			registry.registerBean("bar", Bar.class, spec -> spec
+					.prototype()
+					.lazyInit()
+					.description("Custom description")
+					.supplier(context -> new Bar(context.bean(Foo.class))));
+			if (env.matchesProfiles("baz")) {
+				registry.registerBean(Baz.class, spec -> spec
+						.supplier(context -> new Baz("Hello World!")));
+			}
+		}
+
+	}
+
+	record Foo() {
+
+	}
+
+	record Bar(Foo foo) {
+
+	}
+
+	record Baz(String text) {
+
+	}
+
+}
