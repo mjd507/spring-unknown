@@ -1,8 +1,10 @@
 package com.jiandong;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
 class ApplicationTest {
 
     String[] args() {
@@ -11,9 +13,8 @@ class ApplicationTest {
         };
     }
 
-	@Disabled // will make other jms integration tests fail. msgs sent to queue may consume by this thread.
     @Test
-    void testMain() {
-        Application.main(args());
+	void contextLoad() {
+
     }
 }
