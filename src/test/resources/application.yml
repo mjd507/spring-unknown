@@ -1,4 +1,9 @@
 spring:
+  mvc:
+    apiversion:
+      required: true
+      use:
+        header: X-API-Version
   threads:
     virtual:
       enabled: true
