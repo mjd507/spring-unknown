@@ -1,5 +1,6 @@
 package com.jiandong.core.resilience;
 
+import com.jiandong.support.ThirtyPartyService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

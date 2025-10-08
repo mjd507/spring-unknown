@@ -1,5 +1,6 @@
 package com.jiandong.core.resilience;
 
+import com.jiandong.support.ThirtyPartyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

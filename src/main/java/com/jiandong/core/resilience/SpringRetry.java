@@ -2,6 +2,7 @@ package com.jiandong.core.resilience;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.jiandong.support.ThirtyPartyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
