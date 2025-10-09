@@ -1,6 +1,5 @@
-package com.jiandong.performance;
+package com.jiandong.performance.virtualthread;
 
-import com.jiandong.performance.virtualthread.PlatformVsVirtual;
 import com.jiandong.support.ThirtyPartyService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

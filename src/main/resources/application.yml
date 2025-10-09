@@ -50,11 +50,3 @@ management:
     web:
       exposure:
         include: '*'
-
-decorator:
-  datasource:
-    flexy-pool:
-      threshold:
-        connection:
-          acquire: -1
-          lease: -1
