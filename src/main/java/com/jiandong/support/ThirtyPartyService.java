@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ThirtyPartyService {
@@ -18,6 +20,16 @@ public class ThirtyPartyService {
 	}
 
 	public void slowMethod() {
+		try {
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void innerLongTransaction() {
 		try {
 			Thread.sleep(1000);
 		}
