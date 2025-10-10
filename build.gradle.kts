@@ -2,6 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "4.0.0-M3"
     id("io.spring.dependency-management") version "1.1.7"
+    jacoco
 }
 
 group = "com.jiandong"
@@ -60,4 +61,14 @@ tasks.withType<Test> {
     testLogging.showStandardStreams = true
 
     useJUnitPlatform()
+
+    finalizedBy(tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification)
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = true
+        html.required = false
+    }
 }
