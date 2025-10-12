@@ -1,8 +1,6 @@
 package com.jiandong.integration;
 
 import jakarta.jms.ConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.context.annotation.Bean;
@@ -15,8 +13,6 @@ import org.springframework.integration.jms.dsl.Jms;
 @Configuration
 @EnableIntegration
 public class JmsIntegrationFlow {
-
-	private static final Logger log = LoggerFactory.getLogger(JmsIntegrationFlow.class);
 
 	private static final JsonMapper jsonMapper = new JsonMapper();
 
@@ -32,13 +28,6 @@ public class JmsIntegrationFlow {
 	}
 
 	public record Point(int x, int y) {
-
-		@Override
-		public boolean equals(Object obj) {
-			return obj instanceof Point(int x1, int y1)
-					&& x == x1
-					&& y == y1;
-		}
 
 	}
 

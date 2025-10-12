@@ -4,6 +4,7 @@ import java.time.Duration;
 
 import javax.sql.DataSource;
 
+import com.jiandong.support.SupportBean;
 import com.jiandong.transactionaloutbox.UserRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,12 @@ import org.springframework.integration.jdbc.store.channel.H2ChannelMessageStoreQ
 public class UserRegisterNotifyFlow {
 
 	private static final Logger log = LoggerFactory.getLogger(UserRegisterNotifyFlow.class);
+
+	private final SupportBean supportBean;
+
+	public UserRegisterNotifyFlow(SupportBean supportBean) {
+		this.supportBean = supportBean;
+	}
 
 	@Bean
 	public DirectChannel registeredChannel() {
@@ -58,9 +65,11 @@ public class UserRegisterNotifyFlow {
 		String email = register.email();
 		// put in last step in case of duplicate sending
 		if (email.contains("@abc.com")) {
+			supportBean.reject(register);
 			throw new RuntimeException("simulate sending error.");
 		}
 		log.info("sending email to users mailbox: {}", email);
+		supportBean.ack(register);
 	}
 
 }

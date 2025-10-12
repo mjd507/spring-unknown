@@ -21,7 +21,7 @@ import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.mockito.Mockito.any;
@@ -39,7 +39,7 @@ class CsvFileImportJobTest {
 
 	@Autowired JobOperator jobOperator;
 
-	@MockitoBean
+	@MockitoSpyBean
 	JobExecutionListener csvFileListener; // mock this bean - to know the lifecycle of the integration testing
 
 	@Autowired JdbcClient jdbcClient; // for verifing job results

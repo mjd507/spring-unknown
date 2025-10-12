@@ -117,10 +117,7 @@ public class CsvFileImportJob {
 			@Override
 			public void afterJob(@NonNull JobExecution jobExecution) {
 				StepExecution[] stepExecutions = jobExecution.getStepExecutions().toArray(new StepExecution[] {});
-				StepExecution stepExecution = stepExecutions[0];
-				long readCount = stepExecution.getReadCount();
-				System.out.println("read count:" + readCount);
-				log.info("after job ...");
+				log.info("after job ..., readCount: {}", stepExecutions[0].getReadCount());
 			}
 		};
 	}

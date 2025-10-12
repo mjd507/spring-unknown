@@ -1,6 +1,6 @@
 package com.jiandong.performance.virtualthread;
 
-import com.jiandong.support.ThirtyPartyService;
+import com.jiandong.support.SupportBean;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ class PlatformVsVirtualTest {
 
 	@InjectMocks PlatformVsVirtual platformVsVirtual;
 
-	@Spy ThirtyPartyService thirtyPartyService;
+	@Spy SupportBean supportBean;
 
 	@Test
 	void testPlatformVsVirtual() {
@@ -31,7 +31,7 @@ class PlatformVsVirtualTest {
 		log.info("virtualExecutionTime: {}", virtualExecutionTime);
 		Assertions.assertThat(platformExecutionTime)
 				.isGreaterThan(virtualExecutionTime);
-		verify(thirtyPartyService, times(taskCount * 2)).slowMethod();
+		verify(supportBean, times(taskCount * 2)).slowMethod();
 	}
 
 }

@@ -35,3 +35,4 @@ logging:
     org.springframework:
       web.socket.messaging: DEBUG
       messaging.simp: DEBUG
+      integration: INFO

@@ -2,14 +2,15 @@ package com.jiandong.transactionaloutbox.normal;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
+import com.jiandong.support.SupportBean;
 import com.jiandong.transactionaloutbox.UserRegister;
 import com.jiandong.transactionaloutbox.UserRegisterDao;
 import com.jiandong.transactionaloutbox.UserRegisterReq;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -22,8 +23,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import static org.mockito.Mockito.doAnswer;
 
 @SpringBootTest(classes = {
 		UserRegisterService3.class, UserRegisterDao.class, OutboxEventDao.class,
@@ -45,6 +49,8 @@ class UserRegisterService3Test {
 
 	@Autowired JdbcClient jdbcClient;
 
+	@MockitoBean SupportBean supportBean;
+
 	@Sql(scripts = {
 			"classpath:transactionaloutbox/user_register.sql",
 			"classpath:transactionaloutbox/normal/outbox_event.sql",
@@ -53,12 +59,16 @@ class UserRegisterService3Test {
 	void registerSuccessNotifyFailed() throws InterruptedException {
 		// GIVEN
 		CountDownLatch latch = new CountDownLatch(1);
-		var registerReq = new UserRegisterReq("jiandong-1", "jiandong-1@abc.com");
+		doAnswer(invocation -> {
+			latch.countDown();
+			return null;
+		}).when(supportBean).reject(Mockito.any());
+		var registerReq = new UserRegisterReq("jiandong-5", "jiandong-5@abc.com");
 		// WHEN
 		userRegisterCaller.callRegisterUser(registerReq);
-		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
+		latch.await();
 		// THEN
-		UserRegister user = userRegisterDao.findUser("jiandong-1");
+		UserRegister user = userRegisterDao.findUser("jiandong-5");
 		Assertions.assertThat(user).isNotNull();
 		List<OutboxEvent> outboxEvents = outboxEventDao.listNonCompletedEvents(null);
 		Assertions.assertThat(outboxEvents)
@@ -73,12 +83,16 @@ class UserRegisterService3Test {
 	void registerSuccessNotifySuccess() throws InterruptedException {
 		// GIVEN
 		CountDownLatch latch = new CountDownLatch(1);
-		var registerReq = new UserRegisterReq("jiandong-2", "jiandong-2@cn.com");
+		doAnswer(invocation -> {
+			latch.countDown();
+			return null;
+		}).when(supportBean).ack(Mockito.any());
+		var registerReq = new UserRegisterReq("jiandong-6", "jiandong-6@cn.com");
 		// WHEN
 		userRegisterCaller.callRegisterUser(registerReq);
-		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
+		latch.await();
 		// THEN
-		UserRegister user = userRegisterDao.findUser("jiandong-2");
+		UserRegister user = userRegisterDao.findUser("jiandong-6");
 		Assertions.assertThat(user).isNotNull();
 		List<OutboxEvent> outboxEvents = outboxEventDao.listNonCompletedEvents(null);
 		Assertions.assertThat(outboxEvents).isEmpty();

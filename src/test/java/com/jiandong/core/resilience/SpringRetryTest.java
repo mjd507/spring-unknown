@@ -1,6 +1,6 @@
 package com.jiandong.core.resilience;
 
-import com.jiandong.support.ThirtyPartyService;
+import com.jiandong.support.SupportBean;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,27 +14,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringJUnitConfig(classes = {
-		SpringRetry.class, ThirtyPartyService.class
+		SpringRetry.class, SupportBean.class
 })
 @DirtiesContext
 class SpringRetryTest {
 
 	@Autowired SpringRetry springRetry;
 
-	@MockitoSpyBean ThirtyPartyService thirtyPartyService;
+	@MockitoSpyBean SupportBean supportBean;
 
 	@Test
 	void testSuccess_noRetry() {
 		springRetry.callExternal("thirty");
-		verify(thirtyPartyService).getInfo(anyString());
+		verify(supportBean, times(1)).unstableMethod(anyString());
 	}
 
 	@Test
 	void testFailed_withRetry() {
 		Assertions.assertThatThrownBy(() -> springRetry.callExternal("abcd"))
-				.isExactlyInstanceOf(ThirtyPartyService.UnexpectedException.class);
+				.isExactlyInstanceOf(SupportBean.UnexpectedException.class);
 
-		verify(thirtyPartyService, times(3)).getInfo(anyString());
+		verify(supportBean, times(3)).unstableMethod(anyString());
 	}
 
 }

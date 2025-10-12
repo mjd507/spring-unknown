@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.jiandong.support.ThirtyPartyService;
+import com.jiandong.support.SupportBean;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest(classes = {
-		SpringThrottling.class, ThirtyPartyService.class
+		SpringThrottling.class, SupportBean.class
 })
 @EnableScheduling
 @ImportAutoConfiguration({TaskSchedulingAutoConfiguration.class})
@@ -37,7 +37,7 @@ class SpringThrottlingTest {
 
 	@Autowired SpringThrottling springThrottling;
 
-	@MockitoSpyBean ThirtyPartyService thirtyPartyService;
+	@MockitoSpyBean SupportBean supportBean;
 
 	@Autowired TaskScheduler taskScheduler;
 
@@ -63,7 +63,7 @@ class SpringThrottlingTest {
 		}
 		// THEN
 		assertThat(threadNameList).hasSize(threadCount);
-		verify(thirtyPartyService, times(threadCount)).slowMethod();
+		verify(supportBean, times(threadCount)).slowMethod();
 	}
 
 }

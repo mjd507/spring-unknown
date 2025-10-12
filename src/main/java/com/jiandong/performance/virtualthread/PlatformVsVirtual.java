@@ -5,20 +5,22 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import com.jiandong.support.ThirtyPartyService;
+import com.jiandong.support.SupportBean;
 
 import org.springframework.util.StopWatch;
 
+import static com.jiandong.support.SupportUtils.latchAwait;
+
 public class PlatformVsVirtual {
 
-	private final ThirtyPartyService thirtyPartyService;
+	private final SupportBean supportBean;
 
 	Executor platFormThreadExecutor = Executors.newFixedThreadPool(2);
 
 	Executor virtualThreadPerTaskExecutor = Executors.newVirtualThreadPerTaskExecutor();
 
-	public PlatformVsVirtual(ThirtyPartyService thirtyPartyService) {
-		this.thirtyPartyService = thirtyPartyService;
+	public PlatformVsVirtual(SupportBean supportBean) {
+		this.supportBean = supportBean;
 	}
 
 	public double platformExecutionTime(int taskCount) {
@@ -41,16 +43,11 @@ public class PlatformVsVirtual {
 		CountDownLatch latch = new CountDownLatch(taskCount);
 		for (int i = 0; i < taskCount; i++) {
 			taskExecutor.execute(() -> {
-				thirtyPartyService.slowMethod();
+				supportBean.slowMethod();
 				latch.countDown();
 			});
 		}
-		try {
-			latch.await();
-		}
-		catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		latchAwait(latch);
 	}
 
 }

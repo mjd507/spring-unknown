@@ -1,6 +1,6 @@
 package com.jiandong.performance.transactions;
 
-import com.jiandong.support.ThirtyPartyService;
+import com.jiandong.support.SupportBean;
 
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
@@ -18,14 +18,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 public class TransactionDbConn {
 
-	private final ThirtyPartyService thirtyPartyService;
+	private final SupportBean supportBean;
 
 	private final JdbcClient jdbcClient;
 
 	private final TransactionTemplate transactionTemplate;
 
-	public TransactionDbConn(ThirtyPartyService thirtyPartyService, JdbcClient jdbcClient, TransactionTemplate transactionTemplate) {
-		this.thirtyPartyService = thirtyPartyService;
+	public TransactionDbConn(SupportBean supportBean, JdbcClient jdbcClient, TransactionTemplate transactionTemplate) {
+		this.supportBean = supportBean;
 		this.jdbcClient = jdbcClient;
 		this.transactionTemplate = transactionTemplate;
 	}
@@ -33,23 +33,23 @@ public class TransactionDbConn {
 	@Transactional
 	public void case1() {
 		jdbcClient.sql("select 1").query(Integer.class).single();
-		thirtyPartyService.slowMethod(); // block transaction commit.
+		supportBean.slowMethod(); // block transaction commit.
 	}
 
 	public void fix1() {
 		transactionTemplate.execute(status -> jdbcClient.sql("select 1").query(Integer.class).single());
-		thirtyPartyService.slowMethod();
+		supportBean.slowMethod();
 	}
 
 	@Transactional
 	public void case2() {
 		jdbcClient.sql("select 1").query(Integer.class).single();
-		thirtyPartyService.innerLongTransaction(); // block outer transaction
+		supportBean.innerLongTransaction(); // block outer transaction
 	}
 
 	public void fix2() {
 		transactionTemplate.execute(status -> jdbcClient.sql("select 1").query(Integer.class).single());
-		thirtyPartyService.innerLongTransaction();
+		supportBean.innerLongTransaction();
 	}
 
 }

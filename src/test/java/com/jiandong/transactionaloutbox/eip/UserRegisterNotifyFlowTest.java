@@ -1,13 +1,14 @@
 package com.jiandong.transactionaloutbox.eip;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
+import com.jiandong.support.SupportBean;
 import com.jiandong.transactionaloutbox.UserRegister;
 import com.jiandong.transactionaloutbox.UserRegisterDao;
 import com.jiandong.transactionaloutbox.UserRegisterReq;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -21,8 +22,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.integration.jdbc.store.JdbcChannelMessageStore;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import static org.mockito.Mockito.doAnswer;
 
 @SpringBootTest(classes = {
 		UserRegisterNotifyFlow.class, UserRegisterService1.class, UserRegisterDao.class
@@ -42,15 +46,21 @@ class UserRegisterNotifyFlowTest {
 
 	@Autowired JdbcChannelMessageStore jdbcChannelMessageStore;
 
+	@MockitoBean SupportBean supportBean;
+
 	@Sql(scripts = {"classpath:transactionaloutbox/user_register.sql"})
 	@Test
 	void registerSuccessNotifyFailed() throws InterruptedException {
 		// GIVEN
 		CountDownLatch latch = new CountDownLatch(1);
 		var registerReq = new UserRegisterReq("jiandong-1", "jiandong-1@abc.com");
+		doAnswer(invocation -> {
+			latch.countDown();
+			return null;
+		}).when(supportBean).reject(Mockito.any());
 		// WHEN
 		userRegisterService1.register(registerReq);
-		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
+		latch.await();
 		// THEN
 		UserRegister user = userRegisterDao.findUser("jiandong-1");
 		Assertions.assertThat(user).isNotNull();
@@ -69,9 +79,13 @@ class UserRegisterNotifyFlowTest {
 		// GIVEN
 		CountDownLatch latch = new CountDownLatch(1);
 		var registerReq = new UserRegisterReq("jiandong-2", "jiandong-2@cn.com");
+		doAnswer(invocation -> {
+			latch.countDown();
+			return null;
+		}).when(supportBean).ack(Mockito.any());
 		// WHEN
 		userRegisterService1.register(registerReq);
-		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
+		latch.await();
 		// THEN
 		Message<?> message = jdbcChannelMessageStore.pollMessageFromGroup("registered-user");
 		Assertions.assertThat(message).isNull();

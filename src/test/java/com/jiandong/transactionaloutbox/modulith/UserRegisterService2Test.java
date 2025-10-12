@@ -2,13 +2,14 @@ package com.jiandong.transactionaloutbox.modulith;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
+import com.jiandong.support.SupportBean;
 import com.jiandong.transactionaloutbox.UserRegister;
 import com.jiandong.transactionaloutbox.UserRegisterDao;
 import com.jiandong.transactionaloutbox.UserRegisterReq;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -23,8 +24,11 @@ import org.springframework.modulith.events.core.TargetEventPublication;
 import org.springframework.modulith.events.jdbc.SpringModulithAutoImportAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import static org.mockito.Mockito.doAnswer;
 
 @SpringBootTest(classes = {
 		UserRegisterService2.class, NotifyService2.class,
@@ -47,17 +51,23 @@ class UserRegisterService2Test {
 
 	@Autowired EventPublicationService eventPublicationService;
 
+	@MockitoBean SupportBean supportBean;
+
 	@Sql(scripts = {"classpath:transactionaloutbox/user_register.sql"})
 	@Test
 	void registerSuccessNotifyFailed() throws InterruptedException {
 		// GIVEN
 		CountDownLatch latch = new CountDownLatch(1);
-		var registerReq = new UserRegisterReq("jiandong-1", "jiandong-1@abc.com");
+		doAnswer(invocation -> {
+			latch.countDown();
+			return null;
+		}).when(supportBean).reject(Mockito.any());
+		var registerReq = new UserRegisterReq("jiandong-3", "jiandong-3@abc.com");
 		// WHEN
 		userRegisterCaller.callRegisterUser(registerReq);
-		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
+		latch.await();
 		// THEN
-		UserRegister user = userRegisterDao.findUser("jiandong-1");
+		UserRegister user = userRegisterDao.findUser("jiandong-3");
 		Assertions.assertThat(user).isNotNull();
 		List<TargetEventPublication> inCompleteEvents = eventPublicationService.listInCompleteEvents();
 		Assertions.assertThat(inCompleteEvents)
@@ -69,12 +79,16 @@ class UserRegisterService2Test {
 	void registerSuccessNotifySuccess() throws InterruptedException {
 		// GIVEN
 		CountDownLatch latch = new CountDownLatch(1);
-		var registerReq = new UserRegisterReq("jiandong-2", "jiandong-2@cn.com");
+		doAnswer(invocation -> {
+			latch.countDown();
+			return null;
+		}).when(supportBean).ack(Mockito.any());
+		var registerReq = new UserRegisterReq("jiandong-4", "jiandong-4@cn.com");
 		// WHEN
 		userRegisterCaller.callRegisterUser(registerReq);
-		latch.await(1, TimeUnit.SECONDS); // need to ensure task executed
+		latch.await();
 		// THEN
-		UserRegister user = userRegisterDao.findUser("jiandong-2");
+		UserRegister user = userRegisterDao.findUser("jiandong-4");
 		Assertions.assertThat(user).isNotNull();
 
 		List<TargetEventPublication> completeEvents = eventPublicationService.listCompleteEvents();

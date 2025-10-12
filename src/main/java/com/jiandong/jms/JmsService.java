@@ -1,9 +1,7 @@
 package com.jiandong.jms;
 
-import java.util.function.Consumer;
-
+import com.jiandong.support.SupportBean;
 import jakarta.jms.Destination;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,14 +16,11 @@ public class JmsService {
 
 	private final JmsClient jmsClient;
 
-	private @Nullable Consumer<Object> consumer;
+	private final SupportBean supportBean;
 
-	public JmsService(JmsClient jmsClient) {
+	public JmsService(JmsClient jmsClient, SupportBean supportBean) {
 		this.jmsClient = jmsClient;
-	}
-
-	public void setMsgConsumer(Consumer<Object> consumer) {
-		this.consumer = consumer;
+		this.supportBean = supportBean;
 	}
 
 	public void send(Destination destination, Object msg) {
@@ -35,9 +30,7 @@ public class JmsService {
 	@JmsListener(destination = "amq")
 	public void receive(Email email) {
 		log.info("Received message: {}", email);
-		if (consumer != null) {
-			consumer.accept(email);
-		}
+		supportBean.ack(email);
 	}
 
 	public record Email(String to, String body) {

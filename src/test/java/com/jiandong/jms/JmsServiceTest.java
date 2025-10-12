@@ -1,9 +1,8 @@
 package com.jiandong.jms;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
+import com.jiandong.support.SupportBean;
 import jakarta.jms.Destination;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -15,10 +14,13 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.jms.autoconfigure.JmsAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
 
-@SpringBootTest(classes = {JmsService.class, JmsConfig.class, JmsQueues.class})
+@SpringBootTest(classes = {JmsService.class, JmsConfig.class, JmsQueues.class, SupportBean.class})
 @ImportAutoConfiguration(classes = {ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class,})
 @DirtiesContext
 class JmsServiceTest {
@@ -27,24 +29,23 @@ class JmsServiceTest {
 
 	@Autowired JmsService jmsService;
 
+	@MockitoSpyBean SupportBean supportBean;
+
 	@Autowired Destination amq;
 
 	@Test
 	void happyFlow() throws InterruptedException {
 		// Given
 		CountDownLatch latch = new CountDownLatch(1);
-		AtomicBoolean consumed = new AtomicBoolean(false);
-		Consumer<Object> consumer = email -> {
-			log.info("Consumed message: {}", email);
-			consumed.set(true);
+		doAnswer(invocation -> {
 			latch.countDown();
-		};
-		jmsService.setMsgConsumer(consumer);
+			return null;
+		}).when(supportBean).ack(any());
 		// When
 		jmsService.send(amq, new JmsService.Email("jiandong@test.com", "hello~"));
 		latch.await();
 		// Then
-		assertThat(consumed).isTrue();
+		verify(supportBean).ack(any());
 	}
 
 }

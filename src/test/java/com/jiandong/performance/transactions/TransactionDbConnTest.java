@@ -1,6 +1,6 @@
 package com.jiandong.performance.transactions;
 
-import com.jiandong.support.ThirtyPartyService;
+import com.jiandong.support.SupportBean;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootTest(classes = {TransactionDbConn.class, ThirtyPartyService.class, TransactionDbConnTest.TransactionCaller.class})
+@SpringBootTest(classes = {TransactionDbConn.class, SupportBean.class, TransactionDbConnTest.TransactionCaller.class})
 @ImportAutoConfiguration(classes = {
 		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
 		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,

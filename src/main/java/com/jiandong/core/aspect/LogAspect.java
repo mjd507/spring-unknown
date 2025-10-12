@@ -19,7 +19,7 @@ public class LogAspect {
 
 	private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
 
-	@Pointcut("@annotation(com.jiandong.core.aop.Log)")
+	@Pointcut("@annotation(com.jiandong.core.aspect.Log)")
 	public void logPointcut() {
 	}
 
