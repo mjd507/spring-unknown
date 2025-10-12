@@ -1,20 +1,17 @@
 package com.jiandong;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+// make this test run at last.
+// due to shared middle-ware like mq are not clean.
+// (messages consumes here but verified in other test class)
+@Order(value = Integer.MAX_VALUE)
 class ApplicationTest {
 
-    String[] args() {
-        return new String[] {
-                "--spring.main.web-application-type=none"
-        };
-    }
-
-    @Test
+	@Test
 	void contextLoad() {
+		Application.main(new String[] {});
+	}
 
-    }
 }
