@@ -14,11 +14,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -49,24 +47,8 @@ public class WebSecurityConfig {
 						.requestMatchers(PathPatternRequestMatcher.pathPattern("/public/**")).permitAll()
 						.requestMatchers(PathPatternRequestMatcher.pathPattern("/h2*/**")).permitAll()
 						.anyRequest().authenticated()
-				)
-//                .x509(httpSecurityX509Configurer -> {
-//                    httpSecurityX509Configurer.subjectPrincipalRegex("CN=(.*?)(?:,|$)");
-//                    httpSecurityX509Configurer.userDetailsService(x509UserDetailService());
-//                })
-		;
+				);
 		return http.build();
-	}
-
-	@Bean
-	public UserDetailsService x509UserDetailService() {
-		return username -> {
-			System.out.println("certificate common name (CN) : " + username);
-			if (username.equals("Bob")) {
-				return new User("user", "pwd", AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
-			}
-			throw new UsernameNotFoundException("User not found!");
-		};
 	}
 
 	@Bean
