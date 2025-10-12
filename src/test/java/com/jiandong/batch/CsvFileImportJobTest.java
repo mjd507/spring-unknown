@@ -1,16 +1,14 @@
 package com.jiandong.batch;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.parameters.JobParameters;
 import org.springframework.batch.core.job.parameters.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -21,11 +19,9 @@ import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.jdbc.Sql;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doAnswer;
+import static com.jiandong.support.SupportUtils.threadSleep;
 
 @SpringBootTest(classes = {CsvFileImportJob.class})
 @ImportAutoConfiguration(classes = {
@@ -39,26 +35,21 @@ class CsvFileImportJobTest {
 
 	@Autowired JobOperator jobOperator;
 
-	@MockitoSpyBean
-	JobExecutionListener csvFileListener; // mock this bean - to know the lifecycle of the integration testing
-
-	@Autowired JdbcClient jdbcClient; // for verifing job results
+	@Autowired JdbcClient jdbcClient; // for verifying job results
 
 	@Test
 	@Sql(scripts = "classpath:batch/employee.sql")
 	void happyScenario() throws Exception {
 		// Given
-		CountDownLatch latch = new CountDownLatch(1);
-		doAnswer(invocation -> {
-			latch.countDown(); return null;
-		}).when(csvFileListener).afterJob(any(JobExecution.class));
-
 		JobParameters jobParameters = new JobParametersBuilder()
 				.addString("csvFilePath", "src/test/resources/batch/batch-data.csv")
 				.toJobParameters();
 		// When
-		jobOperator.start(csvFileImportJob, jobParameters);
-		latch.await(); // until listener finished
+		JobExecution jobExecution = jobOperator.start(csvFileImportJob, jobParameters);
+		// wait to be completed
+		while (jobExecution.getStatus() != BatchStatus.COMPLETED) {
+			threadSleep(500);
+		}
 		// Then
 		var personList = jdbcClient.sql("select * from employee")
 				.query(CsvFileImportJob.Employee.class)
