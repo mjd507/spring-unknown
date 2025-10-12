@@ -43,6 +43,7 @@ dependencies {
     implementation("io.micrometer:micrometer-tracing-bridge-brave")
     implementation("org.springframework.modulith:spring-modulith-events-jdbc") // event-publication table
     implementation("org.springframework.modulith:spring-modulith-starter-jdbc")
+    implementation("org.springframework.modulith:spring-modulith-core") // application modules check
     runtimeOnly("com.h2database:h2")
     // runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
