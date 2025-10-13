@@ -26,11 +26,12 @@ repositories {
 
 extra["springModulithVersion"] = "2.0.0-M3"
 extra["okHttpMockwebserver3"] = "5.1.0"
+extra["shedlockVersion"] = "6.10.0"
 
 dependencies {
+    implementation("org.springframework:spring-aspects")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-h2console")
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -44,6 +45,8 @@ dependencies {
     implementation("org.springframework.modulith:spring-modulith-events-jdbc") // event-publication table
     implementation("org.springframework.modulith:spring-modulith-starter-jdbc")
     implementation("org.springframework.modulith:spring-modulith-core") // application modules check
+    implementation("net.javacrumbs.shedlock:shedlock-spring")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template")
     runtimeOnly("com.h2database:h2")
     // runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -54,6 +57,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.springframework.modulith:spring-modulith-bom:${property("springModulithVersion")}")
+        mavenBom("net.javacrumbs.shedlock:shedlock-bom:${property("shedlockVersion")}")
     }
 }
 
