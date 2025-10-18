@@ -11,7 +11,6 @@ class ApplicationModuleTest {
 	@Test
 	void verifyAppModules() {
 		ApplicationModules modules = ApplicationModules.of(Application.class);
-		modules.forEach(System.out::println);
 		modules.verify();
 	}
 
