@@ -3,6 +3,7 @@ plugins {
     id("org.springframework.boot") version "4.0.0-M3"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
+    id("org.springframework.cloud.contract") version "5.0.0-M4"
 }
 
 group = "com.jiandong"
@@ -27,6 +28,7 @@ repositories {
 extra["springModulithVersion"] = "2.0.0-M3"
 extra["okHttpMockwebserver3"] = "5.1.0"
 extra["shedlockVersion"] = "6.10.0"
+extra["springCloudVersion"] = "2025.1.0-M4"
 
 dependencies {
     implementation("org.springframework:spring-aspects")
@@ -51,6 +53,8 @@ dependencies {
     // runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.squareup.okhttp3:mockwebserver3:${property("okHttpMockwebserver3")}")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier") // contract provider, plugin needed
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner") // contract consumer
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -58,6 +62,7 @@ dependencyManagement {
     imports {
         mavenBom("org.springframework.modulith:spring-modulith-bom:${property("springModulithVersion")}")
         mavenBom("net.javacrumbs.shedlock:shedlock-bom:${property("shedlockVersion")}")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
     }
 }
 
@@ -76,4 +81,12 @@ tasks.jacocoTestReport {
         csv.required = true
         html.required = false
     }
+}
+
+contracts {
+    baseClassForTests = "com.jiandong.BaseTestClass"
+}
+
+tasks.contractTest {
+    useJUnitPlatform()
 }
