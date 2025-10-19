@@ -46,6 +46,7 @@ public class WebSecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(PathPatternRequestMatcher.pathPattern("/public/**")).permitAll()
 						.requestMatchers(PathPatternRequestMatcher.pathPattern("/h2*/**")).permitAll()
+						.requestMatchers(PathPatternRequestMatcher.pathPattern("/actuator/**")).permitAll()
 						.anyRequest().authenticated()
 				);
 		return http.build();
