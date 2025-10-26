@@ -35,6 +35,8 @@
                 stompClient.send("/app/send-to-user", {}, JSON.stringify({"from":'queue'}));
         })
 
+    }, (err) => {
+        console.error('STOMP protocol error: ' + err);
     });
 </script>
 

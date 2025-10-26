@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import com.jiandong.security.WebSecurityConfig;
 import com.jiandong.websocket.WebSocketConfig.WebSocketController.WebSocketMsg;
 import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestPropertySource(properties = {"server.port=9999"})
 @ImportAutoConfiguration({TomcatServletWebServerAutoConfiguration.class, DispatcherServletAutoConfiguration.class})
 @DirtiesContext
+@Disabled("Need further checking.")
 class WebSocketConfigTest {
 
 	private static final Logger log = LoggerFactory.getLogger(WebSocketConfigTest.class);

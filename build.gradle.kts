@@ -1,6 +1,6 @@
 plugins {
     java
-    id("org.springframework.boot") version "4.0.0-M3"
+    id("org.springframework.boot") version "4.0.0-RC1"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
 }
@@ -17,11 +17,6 @@ java {
 
 repositories {
     mavenCentral()
-
-    maven { url = uri("https://repo.spring.io/snapshot") }
-
-    maven { url = uri("https://repo.maven.apache.org/maven2/") }
-
 }
 
 extra["springModulithVersion"] = "2.0.0-M3"
@@ -33,6 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-h2console")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-integration")
@@ -50,6 +46,7 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     // runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("com.squareup.okhttp3:mockwebserver3:${property("okHttpMockwebserver3")}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
