@@ -19,6 +19,8 @@ import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.jdbc.store.JdbcChannelMessageStore;
 import org.springframework.integration.jdbc.store.channel.H2ChannelMessageStoreQueryProvider;
+import org.springframework.integration.jdbc.store.channel.JsonChannelMessageStorePreparedStatementSetter;
+import org.springframework.integration.jdbc.store.channel.JsonMessageRowMapper;
 
 @Configuration
 @EnableIntegration
@@ -41,6 +43,10 @@ public class UserRegisterNotifyFlow {
 	JdbcChannelMessageStore jdbcChannelMessageStore(DataSource dataSource) {
 		JdbcChannelMessageStore jdbcChannelMessageStore = new JdbcChannelMessageStore(dataSource);
 		jdbcChannelMessageStore.setChannelMessageStoreQueryProvider(new H2ChannelMessageStoreQueryProvider());
+		// Enable Json Serialization
+		jdbcChannelMessageStore.setPreparedStatementSetter(new JsonChannelMessageStorePreparedStatementSetter());
+		String trustedPackageName = UserRegister.class.getPackageName();
+		jdbcChannelMessageStore.setMessageRowMapper(new JsonMessageRowMapper(trustedPackageName));
 		return jdbcChannelMessageStore;
 	}
 
