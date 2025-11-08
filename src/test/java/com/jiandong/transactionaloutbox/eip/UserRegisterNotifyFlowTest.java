@@ -48,7 +48,10 @@ class UserRegisterNotifyFlowTest {
 
 	@MockitoBean SupportBean supportBean;
 
-	@Sql(scripts = {"classpath:transactionaloutbox/user_register.sql"})
+	@Sql(scripts = {
+			"classpath:transactionaloutbox/user_register.sql",
+			"classpath:transactionaloutbox/eip/schema-json-store.sql"
+	})
 	@Test
 	void registerSuccessNotifyFailed() throws InterruptedException {
 		// GIVEN
@@ -73,7 +76,10 @@ class UserRegisterNotifyFlowTest {
 				.isEqualTo("jiandong-1@abc.com");
 	}
 
-	@Sql(scripts = {"classpath:transactionaloutbox/user_register.sql"})
+	@Sql(scripts = {
+			"classpath:transactionaloutbox/user_register.sql",
+			"classpath:transactionaloutbox/eip/schema-json-store.sql"
+	})
 	@Test
 	void registerSuccessNotifySuccess() throws InterruptedException {
 		// GIVEN
