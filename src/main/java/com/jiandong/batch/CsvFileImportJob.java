@@ -19,12 +19,9 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.infrastructure.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
-import org.springframework.batch.infrastructure.item.file.LineMapper;
-import org.springframework.batch.infrastructure.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.infrastructure.item.file.mapping.RecordFieldSetMapper;
-import org.springframework.batch.infrastructure.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,25 +61,19 @@ public class CsvFileImportJob {
 	@StepScope
 	public FlatFileItemReader<Employee> csvItemReader(@Value("#{jobParameters['csvFilePath']}") String csvFilePath) {
 		FileSystemResource resource = new FileSystemResource(csvFilePath);
-		var flatFileItemReader = new FlatFileItemReader<>(resource, csvItemLineMapper());
-		flatFileItemReader.setLinesToSkip(1);
-		flatFileItemReader.setStrict(false);
-		flatFileItemReader.setSkippedLinesCallback(s -> log.info("skip first line: {}", s));
-		return flatFileItemReader;
-	}
-
-	@Bean
-	public LineMapper<Employee> csvItemLineMapper() {
-		DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
-		delimitedLineTokenizer.setDelimiter(",");
-		delimitedLineTokenizer.setNames(Arrays.stream(Employee.class.getDeclaredFields())
-				.map(Field::getName).toArray(String[]::new));
-		DefaultLineMapper<Employee> defaultLineMapper = new DefaultLineMapper<>();
-		defaultLineMapper.setLineTokenizer(delimitedLineTokenizer);
-
-		RecordFieldSetMapper<Employee> fieldSetMapper = new RecordFieldSetMapper<>(Employee.class);
-		defaultLineMapper.setFieldSetMapper(fieldSetMapper);
-		return defaultLineMapper;
+		return new FlatFileItemReaderBuilder<Employee>()
+				.resource(resource)
+				.delimited(config -> config
+						.delimiter(",")
+						.names(Arrays.stream(Employee.class.getDeclaredFields())
+								.map(Field::getName).toArray(String[]::new))
+				)
+				.targetType(Employee.class)
+				.linesToSkip(1)
+				.strict(false)
+				.skippedLinesCallback(s -> log.info("skip first line: {}", s))
+				.saveState(false)
+				.build();
 	}
 
 	@Bean
@@ -118,20 +109,11 @@ public class CsvFileImportJob {
 
 	@Bean
 	ItemWriter<Employee> csvItemWriter() {
-		return new JdbcBatchItemWriter<>() {
-
-			@Override
-			public void afterPropertiesSet() {
-				initWriter();
-				super.afterPropertiesSet();
-			}
-
-			private void initWriter() {
-				this.setDataSource(dataSource);
-				this.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-				this.setSql("INSERT INTO employee (first_name, last_name) VALUES (:firstName, :lastName)");
-			}
-		};
+		return new JdbcBatchItemWriterBuilder<Employee>()
+				.dataSource(dataSource)
+				.itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
+				.sql("INSERT INTO employee (first_name, last_name) VALUES (:firstName, :lastName)")
+				.build();
 	}
 
 	public record Employee(String firstName, String lastName) {
