@@ -19,10 +19,6 @@ repositories {
     mavenCentral()
 }
 
-extra["springModulithVersion"] = "2.0.0-M3"
-extra["okHttpMockwebserver3"] = "5.1.0"
-extra["shedlockVersion"] = "6.10.0"
-
 dependencies {
     implementation("org.springframework:spring-aspects")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
@@ -47,14 +43,14 @@ dependencies {
     // runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-webmvc-test")
-    testImplementation("com.squareup.okhttp3:mockwebserver3:${property("okHttpMockwebserver3")}")
+    testImplementation("com.squareup.okhttp3:mockwebserver3:5.1.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.modulith:spring-modulith-bom:${property("springModulithVersion")}")
-        mavenBom("net.javacrumbs.shedlock:shedlock-bom:${property("shedlockVersion")}")
+        mavenBom("org.springframework.modulith:spring-modulith-bom:2.0.0-M3")
+        mavenBom("net.javacrumbs.shedlock:shedlock-bom:6.10.0")
     }
 }
 
