@@ -24,7 +24,7 @@ public class SpringRetry {
 		this.supportBean = supportBean;
 	}
 
-	@Retryable(maxAttempts = 2, delay = 1000, multiplier = 1.5) // 1000 1500 2250
+	@Retryable(maxRetries = 2, delay = 1000, multiplier = 1.5) // 1000 1500 2250
 	public void callExternal(String param) {
 		int times = callTimes.getAndIncrement();
 		log.info("starting calling thirty party service. times: {}", times);

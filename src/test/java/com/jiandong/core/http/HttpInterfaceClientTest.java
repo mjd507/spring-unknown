@@ -129,7 +129,7 @@ class HttpInterfaceClientTest {
 				.defaultHeader("Accept", "application/json")
 				.configureMessageConverters(clientBuilder -> clientBuilder
 						.registerDefaults()
-						.jsonMessageConverter(new JacksonJsonHttpMessageConverter(jsonMapper)))
+						.withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper)))
 				.build();
 		HttpServiceProxyFactory githubHttpServiceFactory = HttpServiceProxyFactory
 				.builderFor(RestClientAdapter.create(githubRestClient)).build();
@@ -142,7 +142,7 @@ class HttpInterfaceClientTest {
 				.baseUrl(this.stackOverFlowServer.url("/").toString())
 				.configureMessageConverters(clientBuilder -> clientBuilder
 						.registerDefaults()
-						.jsonMessageConverter(new JacksonJsonHttpMessageConverter(jsonMapper)))
+						.withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper)))
 				.build();
 		HttpServiceProxyFactory stackOverFlowServiceFactory = HttpServiceProxyFactory
 				.builderFor(RestClientAdapter.create(stackOverFlowRestClient)).build();
