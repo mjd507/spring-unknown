@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: 'postgres:11'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    ports:
+      - '5432'
+    volumes:
+      - type: bind
+        source: ./docker/db/init
+        target: /docker-entrypoint-initdb.d/
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+
+volumes:
+  postgres-data:
