@@ -38,10 +38,10 @@ dependencies {
     implementation("org.springframework.modulith:spring-modulith-core") // application modules check
     implementation("net.javacrumbs.shedlock:shedlock-spring")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template")
+    implementation("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-    runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
-    // runtimeOnly("com.mysql:mysql-connector-j")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("com.squareup.okhttp3:mockwebserver3:5.3.2")

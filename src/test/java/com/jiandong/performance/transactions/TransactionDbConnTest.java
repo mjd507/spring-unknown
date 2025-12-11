@@ -1,12 +1,13 @@
 package com.jiandong.performance.transactions;
 
 import com.jiandong.support.SupportBean;
+import com.jiandong.testcontainer.PostgresContainerTest;
+import com.jiandong.testcontainer.PostgresDataSourceConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
@@ -18,13 +19,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootTest(classes = {TransactionDbConn.class, SupportBean.class, TransactionDbConnTest.TransactionCaller.class})
 @ImportAutoConfiguration(classes = {
-		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
+		PostgresDataSourceConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
 		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,
 		TransactionAutoConfiguration.class,
 })
 @EnableTransactionManagement
 @DirtiesContext
-class TransactionDbConnTest {
+class TransactionDbConnTest implements PostgresContainerTest {
 
 	@Autowired TransactionCaller transactionCaller;
 

@@ -18,9 +18,9 @@ import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.jdbc.store.JdbcChannelMessageStore;
-import org.springframework.integration.jdbc.store.channel.H2ChannelMessageStoreQueryProvider;
 import org.springframework.integration.jdbc.store.channel.JsonChannelMessageStorePreparedStatementSetter;
 import org.springframework.integration.jdbc.store.channel.JsonMessageRowMapper;
+import org.springframework.integration.jdbc.store.channel.PostgresChannelMessageStoreQueryProvider;
 
 @Configuration
 @EnableIntegration
@@ -42,7 +42,7 @@ public class UserRegisterNotifyFlow {
 	@Bean
 	JdbcChannelMessageStore jdbcChannelMessageStore(DataSource dataSource) {
 		JdbcChannelMessageStore jdbcChannelMessageStore = new JdbcChannelMessageStore(dataSource);
-		jdbcChannelMessageStore.setChannelMessageStoreQueryProvider(new H2ChannelMessageStoreQueryProvider());
+		jdbcChannelMessageStore.setChannelMessageStoreQueryProvider(new PostgresChannelMessageStoreQueryProvider());
 		// Enable Json Serialization
 		jdbcChannelMessageStore.setPreparedStatementSetter(new JsonChannelMessageStorePreparedStatementSetter());
 		String trustedPackageName = UserRegister.class.getPackageName();

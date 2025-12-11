@@ -27,7 +27,8 @@ public class OutboxEventDao {
 				.param("eventDate", now)
 				.param("completeDate", null)
 				.update(eventKeyHolder);
-		return new OutboxEvent(Objects.requireNonNull(eventKeyHolder.getKey()).intValue(), eventType, eventBody, now, null);
+		Number key = (Number) Objects.requireNonNull(eventKeyHolder.getKeys()).get("id");
+		return new OutboxEvent(key.intValue(), eventType, eventBody, now, null);
 	}
 
 	public void completeOutboxEvent(OutboxEvent outboxEvent) {

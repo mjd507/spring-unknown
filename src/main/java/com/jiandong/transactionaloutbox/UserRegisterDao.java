@@ -26,7 +26,7 @@ public class UserRegisterDao {
 				.param("email", registerReq.email())
 				.param("createDate", now)
 				.update(userRegisterKeyHolder);
-		Number id = userRegisterKeyHolder.getKey();
+		Number id = (Number) Objects.requireNonNull(userRegisterKeyHolder.getKeys()).get("id");
 		return new UserRegister(Objects.requireNonNull(id).intValue(), registerReq.name(), registerReq.email());
 	}
 
