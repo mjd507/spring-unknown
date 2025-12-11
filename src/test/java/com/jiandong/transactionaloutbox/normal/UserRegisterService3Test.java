@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import com.jiandong.support.SupportBean;
+import com.jiandong.testcontainer.PostgresContainerTest;
+import com.jiandong.testcontainer.PostgresDataSourceConfiguration;
 import com.jiandong.transactionaloutbox.UserRegister;
 import com.jiandong.transactionaloutbox.UserRegisterDao;
 import com.jiandong.transactionaloutbox.UserRegisterReq;
@@ -15,7 +17,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
@@ -24,7 +25,6 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import static org.mockito.Mockito.doAnswer;
@@ -34,12 +34,12 @@ import static org.mockito.Mockito.doAnswer;
 		NotifyService3.class, UserRegisterService3Test.UserRegisterCaller.class
 })
 @ImportAutoConfiguration(classes = {
-		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
+		PostgresDataSourceConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
 		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class, TaskExecutionAutoConfiguration.class
 })
 @EnableTransactionManagement
 @DirtiesContext
-class UserRegisterService3Test {
+class UserRegisterService3Test implements PostgresContainerTest {
 
 	@Autowired UserRegisterCaller userRegisterCaller;
 
@@ -51,10 +51,6 @@ class UserRegisterService3Test {
 
 	@MockitoBean SupportBean supportBean;
 
-	@Sql(scripts = {
-			"classpath:transactionaloutbox/user_register.sql",
-			"classpath:transactionaloutbox/normal/outbox_event.sql",
-	})
 	@Test
 	void registerSuccessNotifyFailed() throws InterruptedException {
 		// GIVEN
@@ -75,10 +71,6 @@ class UserRegisterService3Test {
 				.hasSize(1);
 	}
 
-	@Sql(scripts = {
-			"classpath:transactionaloutbox/user_register.sql",
-			"classpath:transactionaloutbox/normal/outbox_event.sql",
-	})
 	@Test
 	void registerSuccessNotifySuccess() throws InterruptedException {
 		// GIVEN

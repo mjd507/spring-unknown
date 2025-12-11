@@ -7,12 +7,12 @@ spring:
   threads:
     virtual:
       enabled: true
-  datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: root
-    password: root
-    hikari:
+  #  datasource:
+  #    driverClassName: org.h2.Driver
+  #    url: jdbc:h2:mem:testdb
+  #    username: root
+  #    password: root
+  #    hikari:
   activemq:
     broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
   integration:
@@ -20,7 +20,7 @@ spring:
       initialize-schema: always  # auto create integration related tables
   batch:
     jdbc:
-      initialize-schema: always # auto create for test
+      initialize-schema: never
     job:
       enabled: false  # prevent auto-launch the only one job
   modulith:

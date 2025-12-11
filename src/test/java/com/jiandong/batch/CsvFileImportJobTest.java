@@ -1,5 +1,7 @@
 package com.jiandong.batch;
 
+import com.jiandong.testcontainer.PostgresContainerTest;
+import com.jiandong.testcontainer.PostgresDataSourceConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,23 +15,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.batch.autoconfigure.BatchAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.test.context.jdbc.Sql;
 
 import static com.jiandong.support.SupportUtils.threadSleep;
 
 @SpringBootTest(classes = {CsvFileImportJob.class})
 @ImportAutoConfiguration(classes = {
-		DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
+		PostgresDataSourceConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
 		BatchAutoConfiguration.class,
 		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,
 })
-class CsvFileImportJobTest {
+class CsvFileImportJobTest implements PostgresContainerTest {
 
 	@Autowired @Qualifier("CsvJob") Job csvFileImportJob;
 
@@ -38,7 +38,6 @@ class CsvFileImportJobTest {
 	@Autowired JdbcClient jdbcClient; // for verifying job results
 
 	@Test
-	@Sql(scripts = "classpath:batch/employee.sql")
 	void happyScenario() throws Exception {
 		// Given
 		JobParameters jobParameters = new JobParametersBuilder()
