@@ -1,8 +1,11 @@
+import com.google.protobuf.gradle.id
+
 plugins {
     java
     id("org.springframework.boot") version "4.0.0"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
+    id("com.google.protobuf") version "0.9.5"
 }
 
 group = "com.jiandong"
@@ -40,11 +43,14 @@ dependencies {
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template")
     implementation("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+    implementation("io.grpc:grpc-services")
+    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-webmvc-test")
     testImplementation("com.squareup.okhttp3:mockwebserver3:5.3.2")
+    testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -52,6 +58,7 @@ dependencyManagement {
     imports {
         mavenBom("org.springframework.modulith:spring-modulith-bom:2.0.0")
         mavenBom("net.javacrumbs.shedlock:shedlock-bom:7.2.1")
+        mavenBom("org.springframework.grpc:spring-grpc-dependencies:1.0.0")
     }
 }
 
@@ -69,5 +76,25 @@ tasks.jacocoTestReport {
         xml.required = false
         csv.required = true
         html.required = false
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc"
+    }
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java"
+        }
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                id("grpc") {
+                    option("@generated=omit")
+                }
+            }
+        }
     }
 }
