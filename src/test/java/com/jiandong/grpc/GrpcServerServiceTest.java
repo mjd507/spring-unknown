@@ -2,34 +2,32 @@ package com.jiandong.grpc;
 
 import com.jiandong.proto.HelloReply;
 import com.jiandong.proto.HelloRequest;
-import com.jiandong.proto.SimpleGrpc;
+import com.jiandong.proto.HelloServiceGrpc;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration;
 import org.springframework.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
-import org.springframework.boot.grpc.server.autoconfigure.GrpcServerFactoryAutoConfiguration;
 import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureInProcessTransport;
+import org.springframework.boot.grpc.test.autoconfigure.InProcessTestAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.grpc.client.ImportGrpcClients;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestPropertySource(properties = {
-		"spring.grpc.client.default-channel.address=localhost:8080"
-})
 @SpringBootTest(classes = GrpcServerService.class)
 @AutoConfigureInProcessTransport
+@ImportGrpcClients(basePackageClasses = HelloServiceGrpc.class)
 @ImportAutoConfiguration(classes = {
 		GrpcServerAutoConfiguration.class,
-		GrpcServerFactoryAutoConfiguration.class,
 		SslAutoConfiguration.class,
+		InProcessTestAutoConfiguration.class // allow channel to support all target, not just [in-process:]
 })
 class GrpcServerServiceTest {
 
 	@Autowired
-	SimpleGrpc.SimpleBlockingStub stub;
+	HelloServiceGrpc.HelloServiceBlockingStub stub;
 
 	@Test
 	void contextLoads() {
