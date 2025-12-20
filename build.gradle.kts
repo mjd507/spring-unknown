@@ -57,7 +57,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.springframework.modulith:spring-modulith-bom:2.0.0")
-        mavenBom("net.javacrumbs.shedlock:shedlock-bom:7.2.1")
+        mavenBom("net.javacrumbs.shedlock:shedlock-bom:7.2.2")
         mavenBom("org.springframework.grpc:spring-grpc-dependencies:1.0.0")
     }
 }
