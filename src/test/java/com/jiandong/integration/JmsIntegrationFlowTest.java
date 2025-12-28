@@ -2,6 +2,8 @@ package com.jiandong.integration;
 
 import com.jiandong.jms.JmsConfig;
 import com.jiandong.jms.JmsQueues;
+import com.jiandong.testcontainer.ActivemqConnectionConfiguration;
+import com.jiandong.testcontainer.ActivemqContainerTest;
 import jakarta.jms.Destination;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,9 @@ import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(classes = {JmsIntegrationFlow.class, JmsConfig.class, JmsQueues.class})
-@ImportAutoConfiguration(classes = {ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class})
+@ImportAutoConfiguration(classes = {ActivemqConnectionConfiguration.class, ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class})
 @DirtiesContext
-class JmsIntegrationFlowTest {
+class JmsIntegrationFlowTest implements ActivemqContainerTest {
 
 	@Autowired Destination eipQueue;
 
