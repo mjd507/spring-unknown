@@ -1,4 +1,8 @@
 services:
+  activemq:
+    image: 'apache/activemq-classic:6.1.8'
+    ports:
+      - '61616'
   postgres:
     image: 'postgres:11'
     environment:

@@ -25,7 +25,9 @@ spring:
   #  h2:
   #    console.enabled: true
   activemq:
-    broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
+    embedded:
+      enabled: false
+  #   broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
   integration:
     jdbc:
       initialize-schema: never  # never auto create integration related tables

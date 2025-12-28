@@ -31,22 +31,6 @@ public interface PostgresContainerTest {
 		POSTGRES_CONTAINER.start();
 	}
 
-	static String getDriverClassName() {
-		return POSTGRES_CONTAINER.getDriverClassName();
-	}
-
-	static String getJdbcUrl() {
-		return POSTGRES_CONTAINER.getJdbcUrl();
-	}
-
-	static String getUsername() {
-		return POSTGRES_CONTAINER.getUsername();
-	}
-
-	static String getPassword() {
-		return POSTGRES_CONTAINER.getPassword();
-	}
-
 	static DataSource postgresqlDataSource() {
 		HikariDataSource dataSource = new HikariDataSource();
 		dataSource.setDriverClassName(POSTGRES_CONTAINER.getDriverClassName());

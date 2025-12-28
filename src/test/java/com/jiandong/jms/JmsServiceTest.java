@@ -3,6 +3,8 @@ package com.jiandong.jms;
 import java.util.concurrent.CountDownLatch;
 
 import com.jiandong.support.SupportBean;
+import com.jiandong.testcontainer.ActivemqConnectionConfiguration;
+import com.jiandong.testcontainer.ActivemqContainerTest;
 import jakarta.jms.Destination;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -21,9 +23,9 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest(classes = {JmsService.class, JmsConfig.class, JmsQueues.class, SupportBean.class})
-@ImportAutoConfiguration(classes = {ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class,})
+@ImportAutoConfiguration(classes = {ActivemqConnectionConfiguration.class, ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class})
 @DirtiesContext
-class JmsServiceTest {
+class JmsServiceTest implements ActivemqContainerTest {
 
 	private static final Logger log = LoggerFactory.getLogger(JmsServiceTest.class);
 
