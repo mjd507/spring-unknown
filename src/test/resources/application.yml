@@ -17,17 +17,17 @@ spring:
     broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
   integration:
     jdbc:
-      initialize-schema: always  # auto create integration related tables
+      initialize-schema: never  # never auto create integration related tables
   batch:
     jdbc:
-      initialize-schema: never
+      initialize-schema: never # never auto create batch related tables
     job:
       enabled: false  # prevent auto-launch the only one job
   modulith:
     events:
       jdbc:
         schema-initialization:
-          enabled: true # always create for test
+          enabled: false # do not auto create table for event publication
 
 
 logging:
