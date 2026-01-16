@@ -34,6 +34,7 @@ dependencies {
     implementation("org.springframework.integration:spring-integration-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-activemq")
     implementation("org.apache.activemq:activemq-kahadb-store")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("io.micrometer:micrometer-tracing-bridge-brave")
     implementation("org.springframework.modulith:spring-modulith-events-jdbc") // event-publication table
@@ -55,6 +56,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-security-test")
     testImplementation("org.springframework.integration:spring-integration-test")
     testImplementation("org.springframework.boot:spring-boot-starter-activemq-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-kafka-test")
     testImplementation("org.springframework.boot:spring-boot-starter-websocket-test")
     testImplementation("org.springframework.modulith:spring-modulith-starter-test")
     testImplementation("com.squareup.okhttp3:mockwebserver3:5.3.2")

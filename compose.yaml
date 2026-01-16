@@ -18,6 +18,43 @@ services:
       - type: volume
         source: postgres-data
         target: /var/lib/postgresql/data
+  kafka:
+    image: apache/kafka:4.1.1
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    user: root
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29092
+      CLUSTER_ID: "l98J9e8sT9-78jkl8s7d89"
+
+      KAFKA_LISTENERS: BROKER://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: BROKER://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_LOG_DIRS: /tmp/kafka-logs
+      KAFKA_KRAFT_LOG_DIRS: /tmp/kraft-combined-logs
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONTROLLER_BROKER_TIMEOUT_MS: 10000
+    volumes:
+      - kafka-data:/tmp/kafka-logs
+      - kraft-data:/tmp/kraft-combined-logs
+    networks:
+      - kafka-network
+
+networks:
+  kafka-network:
+    driver: bridge
 
 volumes:
   postgres-data:
+  kafka-data:
+  kraft-data:
