@@ -28,6 +28,25 @@ spring:
     embedded:
       enabled: false
   #   broker-url: vm://localhost?broker.persistent=false&broker.useShutdownHook=false
+  kafka:
+    bootstrap-servers: localhost:9092
+    #    ssl:
+    #      key-store-key:
+    #      key-store-location:
+    #      trust-store-location:
+    #      trust-store-password:
+    template:
+      observation-enabled: true
+    listener:
+      observation-enabled: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: group1
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   integration:
     jdbc:
       initialize-schema: never  # never auto create integration related tables
