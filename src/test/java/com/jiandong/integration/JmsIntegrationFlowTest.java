@@ -1,7 +1,7 @@
 package com.jiandong.integration;
 
-import com.jiandong.jms.JmsConfig;
-import com.jiandong.jms.JmsQueues;
+import com.jiandong.mq.activemq.JmsConfig;
+import com.jiandong.mq.activemq.JmsQueues;
 import com.jiandong.testcontainer.ActivemqConnectionConfiguration;
 import com.jiandong.testcontainer.ActivemqContainerTest;
 import jakarta.jms.Destination;
