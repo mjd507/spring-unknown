@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 
 @TestConfiguration
-@Import({WebSecurityConfig.class, JwtConfig.class, JwtTokenGenerator.class, MockMvcWithJwtHelper.class})
-public class SecurityContext {
+@Import({WebSecurityConfig.class, JwtConfig.class, JwtTokenGenerator.class, JwtTokenHelper.class})
+public class TestSecurityConfig {
 
 }

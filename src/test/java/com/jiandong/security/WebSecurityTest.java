@@ -1,7 +1,7 @@
 package com.jiandong.security;
 
-import com.jiandong.support.MockMvcWithJwtHelper;
-import com.jiandong.support.SecurityContext;
+import com.jiandong.support.JwtTokenHelper;
+import com.jiandong.support.TestSecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,13 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.MockMvcAutoConfiguration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootTest(classes = {
-		SecurityContext.class,
+		TestSecurityConfig.class,
 		WebSecurityTest.SecurityTestController.class,
 })
 @ImportAutoConfiguration({
@@ -28,11 +30,12 @@ public class WebSecurityTest {
 
 	@Autowired MockMvcTester mockMvcTester;
 
-	@Autowired MockMvcWithJwtHelper mockMvcWithJwtHelper;
+	@Autowired JwtTokenHelper jwtTokenHelper;
 
 	@Test
 	void test_200_no_authentication() throws Exception {
-		mockMvcWithJwtHelper.normalUserGet(mockMvcTester)
+		mockMvcTester
+				.method(HttpMethod.GET)
 				.uri("/public/security1")
 				.assertThat()
 				.hasStatusOk()
@@ -50,7 +53,9 @@ public class WebSecurityTest {
 
 	@Test
 	void test_403_with_normal_authentication() throws Exception {
-		mockMvcWithJwtHelper.normalUserGet(mockMvcTester)
+		mockMvcTester
+				.method(HttpMethod.GET)
+				.header(HttpHeaders.AUTHORIZATION, jwtTokenHelper.generateNormalUserToken())
 				.uri("/private/security2")
 				.assertThat()
 				.hasStatus(HttpStatus.FORBIDDEN);
@@ -58,7 +63,9 @@ public class WebSecurityTest {
 
 	@Test
 	void test_200_with_admin_authentication() throws Exception {
-		mockMvcWithJwtHelper.adminUserGet(mockMvcTester)
+		mockMvcTester
+				.method(HttpMethod.GET)
+				.header(HttpHeaders.AUTHORIZATION, jwtTokenHelper.generateAdminUserToken())
 				.uri("/private/security2")
 				.assertThat()
 				.hasStatusOk()
