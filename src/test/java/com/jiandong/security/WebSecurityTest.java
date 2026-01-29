@@ -1,6 +1,7 @@
 package com.jiandong.security;
 
-import com.jiandong.support.MockMvcDecorator;
+import com.jiandong.support.MockMvcWithJwtHelper;
+import com.jiandong.support.SecurityContext;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootTest(classes = {
-		WebSecurityConfig.class,
+		SecurityContext.class,
 		WebSecurityTest.SecurityTestController.class,
 })
 @ImportAutoConfiguration({
@@ -27,9 +28,11 @@ public class WebSecurityTest {
 
 	@Autowired MockMvcTester mockMvcTester;
 
+	@Autowired MockMvcWithJwtHelper mockMvcWithJwtHelper;
+
 	@Test
 	void test_200_no_authentication() throws Exception {
-		MockMvcDecorator.normalUserGet(mockMvcTester)
+		mockMvcWithJwtHelper.normalUserGet(mockMvcTester)
 				.uri("/public/security1")
 				.assertThat()
 				.hasStatusOk()
@@ -46,13 +49,21 @@ public class WebSecurityTest {
 	}
 
 	@Test
-	void test_200_with_authentication() throws Exception {
-		MockMvcDecorator.normalUserGet(mockMvcTester)
+	void test_403_with_normal_authentication() throws Exception {
+		mockMvcWithJwtHelper.normalUserGet(mockMvcTester)
+				.uri("/private/security2")
+				.assertThat()
+				.hasStatus(HttpStatus.FORBIDDEN);
+	}
+
+	@Test
+	void test_200_with_admin_authentication() throws Exception {
+		mockMvcWithJwtHelper.adminUserGet(mockMvcTester)
 				.uri("/private/security2")
 				.assertThat()
 				.hasStatusOk()
 				.bodyText()
-				.isEqualTo("allowed due to authentication success");
+				.isEqualTo("allowed due to authentication with role:admin success");
 	}
 
 	@RestController
@@ -65,7 +76,7 @@ public class WebSecurityTest {
 
 		@GetMapping("/private/security2")
 		public String test2() {
-			return "allowed due to authentication success";
+			return "allowed due to authentication with role:admin success";
 		}
 
 	}

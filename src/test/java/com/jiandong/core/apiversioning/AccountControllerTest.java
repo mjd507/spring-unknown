@@ -1,7 +1,7 @@
 package com.jiandong.core.apiversioning;
 
-import com.jiandong.security.WebSecurityConfig;
-import com.jiandong.support.MockMvcDecorator;
+import com.jiandong.support.MockMvcWithJwtHelper;
+import com.jiandong.support.SecurityContext;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +17,18 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.web.client.ApiVersionInserter;
 
-@SpringBootTest(classes = {AccountController.class, AccountControllerTest.MockMvcApiVersionConfig.class, WebSecurityConfig.class})
+@SpringBootTest(classes = {AccountController.class, AccountControllerTest.MockMvcApiVersionConfig.class, SecurityContext.class})
 @ImportAutoConfiguration({WebMvcAutoConfiguration.class})
 @AutoConfigureMockMvc
 class AccountControllerTest {
 
 	@Autowired MockMvcTester mockMvcTester;
 
+	@Autowired MockMvcWithJwtHelper mockMvcWithJwtHelper;
+
 	@Test
 	void getAccount_400_no_apiVersion() {
-		MockMvcDecorator.normalUserGet(mockMvcTester)
+		mockMvcWithJwtHelper.normalUserGet(mockMvcTester)
 				.uri("/accounts/99")
 				.assertThat()
 				.hasStatus(HttpStatus.BAD_REQUEST)
@@ -35,7 +37,7 @@ class AccountControllerTest {
 
 	@Test
 	void getAccount_1_0_version_withDefaultName() {
-		MockMvcDecorator.normalUserGet(mockMvcTester)
+		mockMvcWithJwtHelper.normalUserGet(mockMvcTester)
 				.uri("/accounts/99")
 				.apiVersion(1.0)
 				.assertThat()
@@ -45,7 +47,7 @@ class AccountControllerTest {
 
 	@Test
 	void getAccount_1_1_version_withAdvancedName() {
-		MockMvcDecorator.normalUserGet(mockMvcTester)
+		mockMvcWithJwtHelper.normalUserGet(mockMvcTester)
 				.uri("/accounts/99")
 				.apiVersion(1.1)
 				.assertThat()
