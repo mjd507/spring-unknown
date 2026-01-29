@@ -7,13 +7,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import com.jiandong.security.WebSecurityConfig;
+import com.jiandong.support.JwtTokenHelper;
+import com.jiandong.support.TestSecurityConfig;
 import com.jiandong.websocket.WebSocketConfig.WebSocketController.WebSocketMsg;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -41,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(
-		classes = {WebSocketConfig.class, WebSecurityConfig.class},
+		classes = {WebSocketConfig.class, TestSecurityConfig.class},
 		webEnvironment = WebEnvironment.DEFINED_PORT // do not use default mock, which won't start a tomcat web server
 )
 @TestPropertySource(properties = {"server.port=9999"})
@@ -53,13 +55,15 @@ class WebSocketConfigTest {
 
 	private static final int port = 9999;
 
+	@Autowired JwtTokenHelper jwtTokenHelper;
+
 	@Test
 	void testSendToAll() throws Exception {
 		CountDownLatch latch = new CountDownLatch(2);
 		final AtomicReference<Throwable> failure = new AtomicReference<>();
 		// GIVEN
-		var stompSession1 = _createStompSession("Basic dXNlcjp1c2VyX3B3ZA==");
-		var stompSession2 = _createStompSession("Basic YWRtaW46YWRtaW5fcHdk");
+		var stompSession1 = _createStompSession(jwtTokenHelper.generateNormalUserToken());
+		var stompSession2 = _createStompSession(jwtTokenHelper.generateAdminUserToken());
 		Consumer<WebSocketMsg> webSocketMsgConsumer = (webSocketMsg) -> {
 			// Async THEN
 			try {
@@ -93,8 +97,8 @@ class WebSocketConfigTest {
 		final AtomicReference<Throwable> failure = new AtomicReference<>();
 		final AtomicBoolean session1NeverBeCalled = new AtomicBoolean(true);
 		// GIVEN
-		var stompSession1 = _createStompSession("Basic dXNlcjp1c2VyX3B3ZA==");
-		var stompSession2 = _createStompSession("Basic YWRtaW46YWRtaW5fcHdk");
+		var stompSession1 = _createStompSession(jwtTokenHelper.generateNormalUserToken());
+		var stompSession2 = _createStompSession(jwtTokenHelper.generateAdminUserToken());
 		stompSession1.subscribe("/user/queue/messages", new StompSubscribeHandler((webSocketMsg) -> {
 			// Async THEN
 			session1NeverBeCalled.set(false); // never be called
