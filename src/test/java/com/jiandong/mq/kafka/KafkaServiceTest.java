@@ -7,9 +7,7 @@ import com.jiandong.support.SupportBean;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.activemq.autoconfigure.ActiveMQAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.jms.autoconfigure.JmsAutoConfiguration;
 import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -22,7 +20,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest(classes = {KafkaService.class, SupportBean.class})
-@ImportAutoConfiguration(classes = {KafkaAutoConfiguration.class, ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class})
+@ImportAutoConfiguration(classes = {KafkaAutoConfiguration.class})
 @EmbeddedKafka(partitions = 1, topics = TOPIC)
 @DirtiesContext
 class KafkaServiceTest {
