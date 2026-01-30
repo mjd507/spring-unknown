@@ -13,6 +13,7 @@ class ApplicationTest {
 
 	@Test
 	void contextLoad() {
+		System.setProperty("spring.profiles.active", "test");
 		Application.main(new String[] {});
 	}
 
