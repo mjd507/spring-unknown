@@ -2,7 +2,7 @@ import com.google.protobuf.gradle.id
 
 plugins {
     java
-    id("org.springframework.boot") version "4.0.2"
+    id("org.springframework.boot") version "4.0.3"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
     id("com.google.protobuf") version "0.9.5"
