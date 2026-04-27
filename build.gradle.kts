@@ -5,7 +5,7 @@ plugins {
     id("org.springframework.boot") version "4.0.6"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
-    id("com.google.protobuf") version "0.9.5"
+    id("com.google.protobuf") version "0.10.0"
 }
 
 group = "com.jiandong"
