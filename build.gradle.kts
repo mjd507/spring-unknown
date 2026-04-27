@@ -19,6 +19,7 @@ java {
 }
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
 }
 
