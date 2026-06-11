@@ -62,7 +62,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-kafka-test")
     testImplementation("org.springframework.boot:spring-boot-starter-websocket-test")
     testImplementation("org.springframework.modulith:spring-modulith-starter-test")
-    testImplementation("com.squareup.okhttp3:mockwebserver3:5.3.2")
+    testImplementation("com.squareup.okhttp3:mockwebserver3:5.4.0")
     testImplementation("org.springframework.grpc:spring-grpc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
