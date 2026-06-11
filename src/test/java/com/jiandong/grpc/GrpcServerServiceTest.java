@@ -9,20 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration;
 import org.springframework.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
-import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureInProcessTransport;
-import org.springframework.boot.grpc.test.autoconfigure.InProcessTestAutoConfiguration;
+import org.springframework.boot.grpc.test.autoconfigure.AutoConfigureTestGrpcTransport;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.grpc.client.ImportGrpcClients;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = GrpcServerService.class)
-@AutoConfigureInProcessTransport
+@AutoConfigureTestGrpcTransport
 @ImportGrpcClients(basePackageClasses = HelloServiceGrpc.class)
 @ImportAutoConfiguration(classes = {
 		GrpcServerAutoConfiguration.class,
 		SslAutoConfiguration.class,
-		InProcessTestAutoConfiguration.class // allow channel to support all target, not just [in-process:]
 })
 class GrpcServerServiceTest {
 

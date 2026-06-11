@@ -1,11 +1,9 @@
-import com.google.protobuf.gradle.id
-
 plugins {
     java
-    id("org.springframework.boot") version "4.0.6"
+    id("org.springframework.boot") version "4.1.0"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
-    id("com.google.protobuf") version "0.9.5"
+    id("com.google.protobuf") version "0.9.6"
 }
 
 group = "com.jiandong"
@@ -47,8 +45,7 @@ dependencies {
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template")
     implementation("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-    implementation("io.grpc:grpc-services")
-    implementation("org.springframework.grpc:spring-grpc-spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-grpc-server")
     testImplementation("org.testcontainers:testcontainers-postgresql")
     testImplementation("org.testcontainers:testcontainers-activemq")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
@@ -63,7 +60,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-websocket-test")
     testImplementation("org.springframework.modulith:spring-modulith-starter-test")
     testImplementation("com.squareup.okhttp3:mockwebserver3:5.4.0")
-    testImplementation("org.springframework.grpc:spring-grpc-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-grpc-client-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -71,7 +68,6 @@ dependencyManagement {
     imports {
         mavenBom("org.springframework.modulith:spring-modulith-bom:2.0.6")
         mavenBom("net.javacrumbs.shedlock:shedlock-bom:7.7.0")
-        mavenBom("org.springframework.grpc:spring-grpc-dependencies:1.0.3")
     }
 }
 
@@ -89,25 +85,5 @@ tasks.jacocoTestReport {
         xml.required = false
         csv.required = true
         html.required = false
-    }
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc"
-    }
-    plugins {
-        id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java"
-        }
-    }
-    generateProtoTasks {
-        all().forEach {
-            it.plugins {
-                id("grpc") {
-                    option("@generated=omit")
-                }
-            }
-        }
     }
 }
