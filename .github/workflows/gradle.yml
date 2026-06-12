@@ -52,3 +52,4 @@ jobs:
         commit_message: "Update jacoco coverage badge"
         file_pattern: .github/badges/jacoco.svg
         push_options: --no-force
+        token: ${{ secrets.JACOCO_BADGES_SECRET }}
