@@ -18,7 +18,7 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
 
     steps:
     - uses: actions/checkout@v6
@@ -27,6 +27,7 @@ jobs:
       with:
         java-version: '25'
         distribution: 'temurin'
+        token: ${{ secrets.JACOCO_BADGES_SECRET }}
 
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
@@ -45,11 +46,10 @@ jobs:
         generate-coverage-badge: true
         badges-directory: .github/badges
 
-    - name: Update coverage badge to badges branch
+    - name: Upload JaCoCo Badge
       uses: stefanzweifel/git-auto-commit-action@v7
       with:
         branch: badges
-        commit_message: "Update jacoco coverage badge"
+        commit_message: "Upload JaCoCo Badge"
         file_pattern: .github/badges/jacoco.svg
         push_options: --no-force
-        token: ${{ secrets.JACOCO_BADGES_SECRET }}
