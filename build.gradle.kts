@@ -76,10 +76,32 @@ tasks.withType<Test> {
     finalizedBy(tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification)
 }
 
+tasks.withType<JacocoReportBase> {
+    classDirectories.setFrom(
+        classDirectories.files.map { file ->
+            fileTree(file) {
+                exclude(
+                    "**/com/jiandong/proto/**",
+                )
+            }
+        }
+    )
+}
+
 tasks.jacocoTestReport {
     reports {
         xml.required = false
         csv.required = true
         html.required = false
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = BigDecimal(0.95)
+            }
+        }
     }
 }
