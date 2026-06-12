@@ -42,4 +42,13 @@ jobs:
       uses: cicirello/jacoco-badge-generator@v2
       with:
         jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+        generate-coverage-badge: true
+        badges-directory: .github/badges
 
+    - name: Update coverage badge to badges branch
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        branch: badges
+        commit_message: "Update jacoco coverage badge"
+        file_pattern: .github/badges/jacoco.svg
+        push_options: --no-force
