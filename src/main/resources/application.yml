@@ -47,11 +47,6 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  batch:
-    jdbc:
-      initialize-schema: never  # never auto create batch related tables
-    job:
-      enabled: false
   modulith:
     events:
       jdbc:
