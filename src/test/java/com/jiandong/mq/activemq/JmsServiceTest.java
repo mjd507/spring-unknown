@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.activemq.autoconfigure.ActiveMQAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.jms.autoconfigure.JmsAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
@@ -23,7 +23,8 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest(classes = {JmsService.class, JmsConfig.class, JmsQueues.class, SupportBean.class})
-@ImportAutoConfiguration(classes = {ActivemqConnectionConfiguration.class, ActiveMQAutoConfiguration.class, JmsAutoConfiguration.class})
+@ImportAutoConfiguration(classes = {JmsAutoConfiguration.class})
+@Import(ActivemqConnectionConfiguration.class)
 @DirtiesContext
 class JmsServiceTest implements ActivemqContainerTest {
 

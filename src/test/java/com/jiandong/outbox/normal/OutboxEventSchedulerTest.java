@@ -9,8 +9,8 @@ import com.jiandong.testcontainer.PostgresDataSourceConfiguration;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {OutboxEventScheduler.class, ShedLockConfig.class})
-@ImportAutoConfiguration({PostgresDataSourceConfiguration.class})
+@Import({PostgresDataSourceConfiguration.class})
 @DirtiesContext
 class OutboxEventSchedulerTest implements PostgresContainerTest {
 

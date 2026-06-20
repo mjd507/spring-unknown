@@ -7,23 +7,13 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.transaction.autoconfigure.TransactionAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootTest(classes = {TransactionDbConn.class, SupportBean.class, TransactionDbConnTest.TransactionCaller.class})
-@ImportAutoConfiguration(classes = {
-		PostgresDataSourceConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
-		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,
-		TransactionAutoConfiguration.class,
-})
-@EnableTransactionManagement
+@Import(PostgresDataSourceConfiguration.class)
 @DirtiesContext
 class TransactionDbConnTest implements PostgresContainerTest {
 

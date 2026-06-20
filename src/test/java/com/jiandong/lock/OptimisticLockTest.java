@@ -11,23 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.transaction.autoconfigure.TransactionAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootTest(classes = {OptimisticLock.class})
-@ImportAutoConfiguration(classes = {
-		PostgresDataSourceConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
-		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class,
-		TransactionAutoConfiguration.class,
-})
-@EnableTransactionManagement
+@Import(PostgresDataSourceConfiguration.class)
 @DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class OptimisticLockTest implements PostgresContainerTest {

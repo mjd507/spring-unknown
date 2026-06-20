@@ -16,17 +16,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.JdbcClientAutoConfiguration;
-import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.modulith.events.config.EnablePersistentDomainEvents;
 import org.springframework.modulith.events.core.TargetEventPublication;
 import org.springframework.modulith.events.jdbc.SpringModulithAutoImportAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import static org.mockito.Mockito.doAnswer;
 
@@ -36,12 +33,11 @@ import static org.mockito.Mockito.doAnswer;
 		EventPublicationService.class
 })
 @ImportAutoConfiguration(classes = {
-		PostgresDataSourceConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
-		JdbcTemplateAutoConfiguration.class, JdbcClientAutoConfiguration.class, TaskExecutionAutoConfiguration.class,
+		TaskExecutionAutoConfiguration.class,
 		SpringModulithAutoImportAdapter.class
 })
+@Import(PostgresDataSourceConfiguration.class)
 @EnablePersistentDomainEvents
-@EnableTransactionManagement
 @DirtiesContext
 class UserRegisterService2Test implements PostgresContainerTest {
 

@@ -7,13 +7,15 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 // for usage test,
 // see EventSchedulerTest.testScheduler
 // and OutboxEventSchedulerTest.testScheduler
-@SpringBootTest(classes = {ShedLockConfig.class, PostgresDataSourceConfiguration.class})
+@SpringBootTest(classes = {ShedLockConfig.class})
+@Import(PostgresDataSourceConfiguration.class)
 class ShedLockConfigTest implements PostgresContainerTest {
 
 	@Autowired
