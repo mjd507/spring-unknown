@@ -28,7 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.security:spring-security-oauth2-jose") // for decoding/verifying JWT
-    implementation("org.bouncycastle:bcprov-jdk18on:1.84") // cert pem
+    implementation("org.bouncycastle:bcprov-jdk18on:1.85") // cert pem
     implementation("org.springframework.boot:spring-boot-starter-activemq")
     implementation("org.apache.activemq:activemq-kahadb-store")
     implementation("org.springframework.boot:spring-boot-starter-kafka")
