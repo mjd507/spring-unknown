@@ -71,6 +71,9 @@ tasks.withType<Test> {
 
     useJUnitPlatform()
 
+}
+
+tasks.check {
     finalizedBy(tasks.jacocoTestReport, tasks.jacocoTestCoverageVerification)
 }
 
